@@ -32,40 +32,34 @@ double std_dev(vector <double> &values, double mean) {
 }
 
 
-double interpolate(vector<double> &xData, vector<double> &yData, double x, bool extrapolate) {
-   
+double interpolate(vector<double> &xData, vector<double> &yData, double x) {
    	int size = xData.size();
 
-   	double x1;
-   	double y1;
-   	double x2;
-   	double y2;
-
    	// find value of i such that x lies between points at indices i and i+1 of xData
-   	for (int i = 0; i < size; i++) {
+   	for (int i = 0; i < size - 1; i++) {
+	   	if ((xData[i] <= x && x <= xData[i+1]) || (xData[i+1] <= x && x <= xData[i])) {
+	   		double x1 = xData[i];
+	   		double y1 = yData[i];
+	   		double x2 = xData[i+1];
+	   		double y2 = yData[i+1];
 
-	   	// if we exceed the range in xData, return -1
-	   	if (i == size - 1) return -1;
+	   		if (x1 == x2) {
+	   		    return y1;
+	   		}
 
-	   	if ((x >= xData[i] && x <= xData[i+1]) || (x <= xData[i] && x >= xData[i+1])) {
-	   		x1 = xData[i];
-	   		y1 = yData[i];
-	   		x2 = xData[i+1];
-	   		y2 = yData[i+1];
-	   		break;
-	   	}
+            // gradient
+            double dydx = (y2 - y1) / (x2 - x1);
+
+            // linear interpolation
+            return y2 + dydx * (x - x1);
+        }
 	}
 
-	// gradient
-   	double dydx = (y2 - y1) / (x2 - x1);
-   	// linear interpolation        
-   	return y2 + dydx * (x - x1);                                              
+   	return -1;
 }
 
 double calculate_sample_lambda(int N, double bound) {
-	
 	for (double l = (sqrt(1.0/bound)); l <= N; l += 0.01) {
-	        
 		double a = (1.0/(N + 1.0));
 		double b = (N + 1)*((pow(N,2)) - 1 + N*(pow(l,2)));
 		double c = pow(N,2)*pow(l,2);
@@ -76,20 +70,12 @@ double calculate_sample_lambda(int N, double bound) {
 	}
 
 	return 0.0;
-
 }
 
 
-vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <vector <double> > &Y_vals, double confidence, double step) {
+vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <vector <double> > &Y_vals, double confidence, double step, double max_val) {
 
 	int n = X_vals.size();
-
-	// create vector of values interpolating each point
-
-	double max_val = fmax(pv_max, cells_max * kWh_in_one_cell);
-
-	// step size of chebyshev curve
-	//double step = 0.2;
 
 	double lambda = calculate_sample_lambda(n, 1 - confidence);
 	
@@ -102,7 +88,7 @@ vector <vector <double> > chebyshev(vector <vector <double> > &X_vals, vector <v
 		
 		// find value of Y at X_val for every curve
 		for (int trace = 0; trace < X_vals.size(); trace++) {
-			double interpolated_Y = interpolate(X_vals[trace], Y_vals[trace], X_val, false);
+			double interpolated_Y = interpolate(X_vals[trace], Y_vals[trace], X_val);
 
 			if (interpolated_Y >= 0) {
 				Y_set.push_back(interpolated_Y);
@@ -143,7 +129,6 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 #endif
 
 	// create arrays for all B and C values
-
 	vector < vector <double> > B_values(n);
 	vector < vector <double> > C_values(n);
 
@@ -154,23 +139,21 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 
 		double last_B = -1, last_C = -1;
 
-
 		for (auto& sim_result: sizing_curves[i]) {
-			//if (sim_result.B != last_B && sim_result.C != last_C) {
-			Bs.push_back(sim_result.B);
-			Cs.push_back(sim_result.C);
-				//last_B = sim_result.B;
-				//last_C = sim_result.C;
-			//}
-
+			if (sim_result.B != last_B || sim_result.C != last_C) {
+                Bs.push_back(sim_result.B);
+                Cs.push_back(sim_result.C);
+                last_B = sim_result.B;
+                last_C = sim_result.C;
+            }
 		}
 
 		B_values[i] = Bs;
 		C_values[i] = Cs;
 	}
 
-	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence, cells_step*kWh_in_one_cell);
-	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence, pv_step);
+	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence, cells_step * kWh_in_one_cell, cells_max * kWh_in_one_cell);
+	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence, pv_step, pv_max);
 
 #ifdef DEBUG
 	// print chebyshev curves to files.
@@ -188,14 +171,14 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 #endif
 
 	// search the upper envelope for the cheapest system
-	double lowest_cost = numeric_limits<double>::infinity();
-	double lowest_B;
-	double lowest_C;
+	double lowest_cost = INFTY;
+	double lowest_B = INFTY;
+	double lowest_C = INFTY;
 
 	for (double B_val = 0.0; B_val <= cells_max * kWh_in_one_cell; B_val += cells_step * kWh_in_one_cell) {
 
-		double C1 = interpolate(cheby_on_B[1], cheby_on_B[0], B_val, false);
-		double C2 = interpolate(cheby_on_C[0], cheby_on_C[1], B_val, false);
+		double C1 = interpolate(cheby_on_B[1], cheby_on_B[0], B_val);
+		double C2 = interpolate(cheby_on_C[0], cheby_on_C[1], B_val);
 
 		if (C1 < 0 || C2 < 0) {
 			continue;
@@ -212,7 +195,6 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 			lowest_cost = cost;
 			lowest_B = B_val;
 			lowest_C = C_max;
-			// cout << lowest_B << " " << lowest_C << " " << lowest_cost << endl;
 		}
 	}
 

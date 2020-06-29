@@ -39,6 +39,7 @@ double static kWh_in_one_cell = 0.011284;
 double static num_cells_steps = 400; // search in total of n steps for cells
 double static num_pv_steps = 350; // search in total of n steps for pv
 
+double static INFTY = numeric_limits<double>::infinity();
 
 struct SimulationResult {
 
