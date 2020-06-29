@@ -151,8 +151,8 @@ SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &si
 		C_values[i] = Cs;
 	}
 
-	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence, cells_step * kWh_in_one_cell, cells_max * kWh_in_one_cell);
-	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence, pv_step, pv_max);
+	vector <vector <double> > cheby_on_B = chebyshev(C_values, B_values, confidence, pv_step, pv_max);
+	vector <vector <double> > cheby_on_C = chebyshev(B_values, C_values, confidence, cells_step * kWh_in_one_cell, cells_max * kWh_in_one_cell);
 
 #ifdef DEBUG
 	// print chebyshev curves to files.
