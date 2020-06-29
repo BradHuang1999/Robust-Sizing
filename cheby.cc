@@ -1,7 +1,6 @@
 // chebyschev bound code
 
 #include <cmath>
-#include <limits>
 #include <iostream>
 #include <fstream>
 #include "cheby.h"
