@@ -5,6 +5,7 @@
 
 
 import os
+from sys import argv
 import numpy as np
 from subprocess import run, PIPE
 import matplotlib.pyplot as plt
@@ -140,6 +141,16 @@ def run_plot(constant_labels, input_labels, save_dir=None):
 
 # In[36]:
 
+assert len(argv) == 3, 'usage: chebyshev_curve_analytics.py file_id save_dir_suffix'
+
+file_id = argv[1]
+save_dir_suffix = argv[2]
+
+if file_id == 'default':
+    file_prefix = ''
+else:
+    file_prefix = file_id + '_'
+
 
 constant_labels = {
     'binary': './bin/debug/sim',
@@ -148,17 +159,13 @@ constant_labels = {
     'metric': 1,
     'conf': 0.95,
     'n_days': 100,
-    'load_file': 'example_inputs/load.txt',
-    'pv_file': 'example_inputs/pv.txt',
-    # 'load_file': 'example_inputs/new_dheli_load.txt',
-    # 'pv_file': 'example_inputs/new_dheli_pv.txt',
-    # 'load_file': 'example_inputs/seattle_load.txt',
-    # 'pv_file': 'example_inputs/seattle_pv.txt',
+    'load_file': f'example_inputs/{file_prefix}load.txt',
+    'pv_file': f'example_inputs/{file_prefix}pv.txt',
 }
 
-save_dir = 'analytics/macbook'
-# save_dir = 'analytics/new_dheli_macbook'
-# save_dir = 'analytics/seattle_macbook'
+save_dir = f'analytics/{file_prefix}{save_dir_suffix}'
+
+
 
 for epsilon in [0.01, 0.05, 0.1, 0.25, 0.5, 0.75]:
     input_labels = {
