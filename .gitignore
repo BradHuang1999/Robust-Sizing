@@ -2,4 +2,4 @@
 .vscode
 /results/
 /bin/
-.idea
+/cmake-build*
