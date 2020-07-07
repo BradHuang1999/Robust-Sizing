@@ -1,5 +1,3 @@
-make
-
 echo "snc_eue: \t4x Load/3x PV: \t`./bin/snc_eue 2000 500 70 225 0.05 0.95 100 example_inputs/load_4x.txt example_inputs/pv_3x.txt`"
 echo "snc_eue: \t1x Load/1x PV: \t`./bin/snc_eue 2000 500 70 225 0.05 0.95 100 example_inputs/load_1x.txt example_inputs/pv_tmy3.txt`"
 echo "snc_eue: \t4x Load/1x PV: \t`./bin/snc_eue 2000 500 70 225 0.05 0.95 100 example_inputs/load_4x.txt example_inputs/pv_tmy3.txt`"

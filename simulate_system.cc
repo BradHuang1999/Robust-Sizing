@@ -121,19 +121,19 @@ vector <SimulationResult> simulate(vector <double> &load_trace, vector <double> 
 	// use binary search
 	double cells_U = cells_max;
 	double cells_L = cells_min;
-	double mid_cells = 0.0;
-	double loss = 0.0;
 
-	while (cells_U - cells_L > cells_step) {
-
-		mid_cells = (cells_L + cells_U) / 2.0;
-
-		loss = sim(load_trace, solar_trace, start_index, end_index, mid_cells, pv_max, b_0);
+	while (cells_U - cells_L > cells_step)
+	{
+        double mid_cells = (cells_L + cells_U) / 2.0;
+        double loss = sim(load_trace, solar_trace, start_index, end_index, mid_cells, pv_max, b_0);
 
 		//cout << "sim result with " << a2_intercept << " kWh and " << pv_max << " pv: " << loss << endl;
-		if (loss > epsilon) {
+		if (loss > epsilon)
+		{
 			cells_L = mid_cells;
-		} else {
+		}
+		else
+		{
 		 	// (loss <= epsilon)
 			cells_U = mid_cells;
 		}
@@ -144,49 +144,78 @@ vector <SimulationResult> simulate(vector <double> &load_trace, vector <double> 
 	double starting_cost = B_inv*starting_cells + PV_inv * pv_max;
 	double lowest_feasible_pv = pv_max;
 
-
-	double lowest_cost = starting_cost;
-	double lowest_B = starting_cells*kWh_in_one_cell;
-	double lowest_C = pv_max;
-
 	vector <SimulationResult> curve;
-	curve.push_back(SimulationResult(starting_cells*kWh_in_one_cell, lowest_feasible_pv, starting_cost));
-	//cout << "starting cells: " << starting_cells << endl;
+	curve.emplace_back(starting_cells * kWh_in_one_cell, lowest_feasible_pv, starting_cost);
 
 	for (double cells = starting_cells; cells <= cells_max; cells += cells_step) {
 
 		// for each value of cells, find the lowest pv that meets the epsilon loss constraint
-		double loss = 0;
-		while (true) {
-			
-			loss = sim(load_trace, solar_trace, start_index, end_index, cells, lowest_feasible_pv - pv_step, b_0);
+        bool binary_search = true;
 
-			if (loss < epsilon) {
-				lowest_feasible_pv -= pv_step;
-			} else {
-				break;
-			}
+		if (curve.size() >= 2)
+		{
+            double lastC1 = curve.end()[-1].C;
+            double lastC2 = curve.end()[-2].C;
 
-			// this only happens if the trace is very short, since the battery starts half full
-			// and can prevent loss without pv for a short time
-			if (lowest_feasible_pv <= 0) {
-				lowest_feasible_pv = 0;
-				break;
-			}
-		}
+            if (lastC1 - lastC2 < 10 * pv_step)
+            {
+                // use linear search if last two pv values are close
+                binary_search = false;
+            }
+        }
 
-		double cost = B_inv*cells + PV_inv*lowest_feasible_pv;
+		if (binary_search)
+        {
+            double pv_U = lowest_feasible_pv;
+            double pv_L = 0;
 
-		curve.push_back(SimulationResult(cells*kWh_in_one_cell,lowest_feasible_pv, cost));
+            while (pv_U - pv_L > pv_step)
+            {
+                double mid_pv = (pv_L + pv_U) / 2.0;
+                double loss = sim(load_trace, solar_trace, start_index, end_index, cells, mid_pv, b_0);
 
-		if (cost < lowest_cost) {
-			lowest_cost = cost;
-			lowest_B = cells*kWh_in_one_cell;
-			lowest_C = lowest_feasible_pv;
-		}
+                if (loss > epsilon)
+                {
+                    pv_L = mid_pv;
+                }
+                else
+                {
+                    // (loss <= epsilon)
+                    pv_U = mid_pv;
+                }
+            }
 
+            lowest_feasible_pv = pv_U;
+        }
+		else
+        {
+		    while (true)
+		    {
+		        double loss = sim(load_trace, solar_trace, start_index, end_index, cells, lowest_feasible_pv - pv_step, b_0);
+
+		        if (loss < epsilon)
+		        {
+		            lowest_feasible_pv -= pv_step;
+		        }
+		        else
+		        {
+		            break;
+		        }
+
+		        // this only happens if the trace is very short, since the battery starts half full
+		        // and can prevent loss without pv for a short time
+		        if (lowest_feasible_pv <= 0)
+		        {
+		            lowest_feasible_pv = 0;
+		            break;
+		        }
+		    }
+        }
+
+		double cost = B_inv * cells + PV_inv * lowest_feasible_pv;
+
+		curve.emplace_back(cells * kWh_in_one_cell, lowest_feasible_pv, cost);
 	} 
 
-	//return SimulationResult(lowest_B, lowest_C, lowest_cost);
 	return curve;
 }
