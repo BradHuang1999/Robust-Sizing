@@ -22,7 +22,7 @@ using namespace std;
 SimulationResult run_simulations(vector <double> &load, vector <double> &solar, int metric, int chunk_size, int number_of_chunks) {
 
 	// set random seed to a specific value if you want consistency in results
-	srand(10);
+	srand(random_seed);
 
 	// get number of timeslots in each chunk
 	int t_chunk_size = chunk_size*(24/T_u);
@@ -59,7 +59,7 @@ SimulationResult run_simulations(vector <double> &load, vector <double> &solar, 
 
 int main(int argc, char ** argv) {
 	
-	int input_process_status = process_input(argv, true);
+	int input_process_status = process_input(argc, argv, true);
 
 	if (input_process_status) {
 		cerr << "Illegal input" << endl;

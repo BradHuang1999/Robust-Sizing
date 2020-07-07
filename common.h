@@ -29,6 +29,7 @@ extern double pv_min;
 extern double pv_max;
 extern double pv_step; // search in steps of x kW
 
+extern int random_seed;
 
 // CONSTANTS
 
@@ -55,6 +56,6 @@ struct SimulationResult {
 
 vector<double> read_data_from_file(string);
 
-int process_input(char**, bool);
+int process_input(int argc, char **argv, bool process_metric_input);
 
 #endif

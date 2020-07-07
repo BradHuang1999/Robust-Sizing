@@ -23,6 +23,8 @@ double confidence;
 int metric;
 int days_in_chunk;
 
+int random_seed;
+
 vector<double> load;
 vector<double> solar;
 
@@ -49,7 +51,7 @@ vector<double> read_data_from_file(istream &datafile, int limit = INT_MAX) {
     return data;
 }
 
-int process_input(char** argv, bool process_metric_input) {
+int process_input(int argc, char **argv, bool process_metric_input) {
     
     int i = 0;
     
@@ -202,6 +204,18 @@ int process_input(char** argv, bool process_metric_input) {
 		cerr << "error reading solar file " << solarfile << endl;
 		return 1;
 	}
+
+	if (argc == ++i) {
+	    random_seed = 10;
+#ifdef DEBUG
+        cout << "(default) random_seed = " << random_seed << endl;
+#endif
+	} else {
+	    random_seed = stoi(argv[i]);
+#ifdef DEBUG
+        cout << "random_seed = " << random_seed << endl;
+#endif
+    }
 
     return 0;
 }

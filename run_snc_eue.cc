@@ -20,7 +20,7 @@ using namespace std;
 SimulationResult run_snc_eue(vector <double> &load, vector <double> &solar, double epsilon, double confidence, int chunk_size) {
 
 	// use this random seed
-	// srand(10);
+	// srand(random_seed);
 
 	// get number of timeslots in each chunk
 	int t_chunk_size = chunk_size*(24/T_u);
@@ -47,7 +47,7 @@ SimulationResult run_snc_eue(vector <double> &load, vector <double> &solar, doub
 
 int main(int argc, char ** argv) {
 
-	int input_process_status = process_input(argv, false);
+	int input_process_status = process_input(argc, argv, false);
 
 	if (input_process_status) {
 		return 1;
