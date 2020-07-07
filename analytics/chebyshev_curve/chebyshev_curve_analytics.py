@@ -14,8 +14,7 @@ import matplotlib.pyplot as plt
 # In[2]:
 
 
-os.chdir('../')
-os.getcwd()
+os.chdir('../../')
 
 
 # In[3]:
