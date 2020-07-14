@@ -162,7 +162,7 @@ constant_labels = {
     'pv_file': f'example_inputs/{file_prefix}pv.txt',
 }
 
-save_dir = f'analytics/{file_prefix}{save_dir_suffix}'
+save_dir = f'analytics/chebyshev_curve/{file_prefix}{save_dir_suffix}'
 
 
 
