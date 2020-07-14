@@ -19,10 +19,10 @@ double static eta_c = 0.9942;
 double static alpha_d = a2_intercept*1.0; // the 1 indicates the maximum discharging C-rate
 double static alpha_c = a2_intercept*1.0; // the 1 indicates the maximum charging C-rate
 
-double sim(vector <double> &load_trace, vector <double> &solar_trace, int start_index, int end_index,
-				 double cells, double pv, double b_0);
+double sim(vector <double> &load_trace, vector <double> &solar_trace,
+           size_t start_index, size_t end_index, double cells, double pv, double b_0);
 
-vector<SimulationResult> simulate(vector <double> &load_trace, vector <double> &solar_trace, int start_index, int end_index,
-						 double b_0);
+vector<SimulationResult> simulate(vector <double> &load_trace, vector <double> &solar_trace,
+                                  size_t start_index, size_t end_index, double b_0);
 
 #endif

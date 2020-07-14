@@ -21,9 +21,9 @@ double pv_step; // search in steps of x kW
 double epsilon;
 double confidence;
 int metric;
-int days_in_chunk;
-
-int random_seed;
+size_t days_in_chunk;
+size_t chunk_size;
+size_t chunk_step;
 
 vector<double> load;
 vector<double> solar;
@@ -168,6 +168,9 @@ int process_input(int argc, char **argv, bool process_metric_input) {
 	if (load[0] < 0) {
 		cerr << "error reading load file " << loadfile << endl;
 		return 1;
+	} else if (load.size() % T_yr > 0) {
+	    cerr << "load file length needs to be multiple of " << T_yr << endl;
+	    return 1;
 	}
 
     string solarfile = argv[++i];
@@ -203,19 +206,13 @@ int process_input(int argc, char **argv, bool process_metric_input) {
 	if (solar[0] < 0) {
 		cerr << "error reading solar file " << solarfile << endl;
 		return 1;
-	}
-
-	if (argc == ++i) {
-	    random_seed = 10;
-#ifdef DEBUG
-        cout << "(default) random_seed = " << random_seed << endl;
-#endif
-	} else {
-	    random_seed = stoi(argv[i]);
-#ifdef DEBUG
-        cout << "random_seed = " << random_seed << endl;
-#endif
+	} else if (solar.size() % T_yr > 0) {
+        cerr << "solar file length needs to be multiple of " << T_yr << endl;
+        return 1;
     }
+
+    chunk_size = days_in_chunk * 24 / T_u;
+    chunk_step = (load.size() / T_yr) * solar.size() / number_of_chunks;
 
     return 0;
 }

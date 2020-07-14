@@ -14,7 +14,10 @@ extern double PV_inv; // cost per unit (kW) of PV
 extern double epsilon;
 extern double confidence;
 extern int metric;
-extern int days_in_chunk;
+
+extern size_t days_in_chunk;
+extern size_t chunk_size;
+extern size_t chunk_step;
 
 extern vector<double> load;
 extern vector<double> solar;
@@ -29,14 +32,23 @@ extern double pv_min;
 extern double pv_max;
 extern double pv_step; // search in steps of x kW
 
-extern int random_seed;
-
 // CONSTANTS
 
 // defines the number of samples, set via command line input
-int static number_of_chunks = 100;
+size_t static number_of_chunks = 100;
 
-double static T_u = 1.0; // this is the time unit, representing the number of hours in each time slot of the load and solar traces
+/**
+ * T_u: this is the time unit, representing the number of hours in
+ *      each time slot of the load and solar traces
+ */
+size_t static T_u = 1;
+
+/**
+ * T_yr: this is year unit, representing the number of traces that constitutes a year.
+ *       Inputs must have multiples of this size.
+ */
+size_t static T_yr = 365 * 24 / T_u;
+
 double static kWh_in_one_cell = 0.011284;
 double static num_cells_steps = 400; // search in total of n steps for cells
 double static num_pv_steps = 350; // search in total of n steps for pv

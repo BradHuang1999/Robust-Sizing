@@ -19,25 +19,14 @@ using namespace std;
 // metric: 0 for LOLP, 1 for unmet load
 // epsilon: number in range [0,1] representing LOLP or unmet load fraction.
 // chunk_size: length of time (in days)
-SimulationResult run_simulations(vector <double> &load, vector <double> &solar, int metric, int chunk_size, int number_of_chunks) {
-
-	// set random seed to a specific value if you want consistency in results
-	srand(random_seed);
-
-	// get number of timeslots in each chunk
-	int t_chunk_size = chunk_size*(24/T_u);
-
-	vector <vector<SimulationResult> > results;
+SimulationResult run_simulations(vector<double> &load, vector<double> &solar, int metric, size_t number_of_chunks)
+{
+	vector<vector<SimulationResult>> results;
 
 	// get random start times and run simulation on this chunk of data
-	for (int chunk_num = 0; chunk_num < number_of_chunks; chunk_num += 1) {
-
-		int chunk_start = rand() % max(solar.size(),load.size());
-		int chunk_end = chunk_start + t_chunk_size;
-
-		vector <SimulationResult> sr = simulate(load, solar, chunk_start, chunk_end, 0);
-		results.push_back(sr);
-
+	for (size_t chunk_num = 0, chunk_start = 0; chunk_num < number_of_chunks; chunk_num += 1, chunk_start += chunk_step)
+	{
+		results.push_back(simulate(load, solar, chunk_start, chunk_start + chunk_size, 0));
 	}
 
 #ifdef DEBUG
@@ -66,7 +55,7 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 	
-	SimulationResult sr = run_simulations(load, solar, metric, days_in_chunk, number_of_chunks);
+	SimulationResult sr = run_simulations(load, solar, metric, number_of_chunks);
 	cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
 
 	return 0;

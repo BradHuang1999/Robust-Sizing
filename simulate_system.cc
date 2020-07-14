@@ -57,8 +57,9 @@ double calc_max_discharging(double power, double b_prev) {
 // Note: sim_year calls procedures calc_max_charging and calc_max_discharging.
 // You could potentially speed up the computation by expanding these functions into sim_year
 // to avoid procedure calls in this inner loop.
-double sim(vector <double> &load_trace, vector <double> &solar_trace, int start_index, int end_index, double cells, double pv, double b_0) {
-
+double sim(vector <double> &load_trace, vector <double> &solar_trace,
+           size_t start_index, size_t end_index, double cells, double pv, double b_0)
+{
 	update_parameters(cells);
 
 	// set the battery
@@ -69,17 +70,18 @@ double sim(vector <double> &load_trace, vector <double> &solar_trace, int start_
 	double load_deficit = 0;
 	double load_sum = 0;
 
-	int trace_length_solar = solar_trace.size();
-	int trace_length_load = load_trace.size();
+    size_t trace_length_solar = solar_trace.size();
+    size_t trace_length_load = load_trace.size();
 
 	double c = 0.0;
 	double d = 0.0;
 	double max_c = 0.0;
 	double max_d = 0.0;
-	int index_t_solar;
-	int index_t_load;
-	for (int t = start_index; t < end_index; t++) {
+    size_t index_t_solar;
+    size_t index_t_load;
 
+	for (size_t t = start_index; t < end_index; t++)
+	{
 		// wrap around to the start of the trace if we hit the end.
 		index_t_solar = t % trace_length_solar;
 		index_t_load = t % trace_length_load;
@@ -105,17 +107,18 @@ double sim(vector <double> &load_trace, vector <double> &solar_trace, int start_
 
 	if (metric == 0) {
 		// lolp
-		return loss_events/((end_index - start_index)*1.0);
+		return loss_events / (double)(end_index - start_index);
 	} else {
 		// metric == 1, eue
-		return load_deficit/(load_sum*1.0);
+		return load_deficit / (double)load_sum;
 	}
 }
 
 
 // Run simulation for provides solar and load trace to find cheapest combination of
 // load and solar that can meet the epsilon target
-vector <SimulationResult> simulate(vector <double> &load_trace, vector <double> &solar_trace, int start_index, int end_index, double b_0) {
+vector <SimulationResult> simulate(vector <double> &load_trace, vector <double> &solar_trace,
+                                   size_t start_index, size_t end_index, double b_0) {
 
 	// first, find the lowest value of cells that will get us epsilon loss when the PV is maximized
 	// use binary search
@@ -147,8 +150,8 @@ vector <SimulationResult> simulate(vector <double> &load_trace, vector <double> 
 	vector <SimulationResult> curve;
 	curve.emplace_back(starting_cells * kWh_in_one_cell, lowest_feasible_pv, starting_cost);
 
-	for (double cells = starting_cells; cells <= cells_max; cells += cells_step) {
-
+	for (double cells = starting_cells; cells <= cells_max; cells += cells_step)
+	{
 		// for each value of cells, find the lowest pv that meets the epsilon loss constraint
         bool binary_search = true;
 
