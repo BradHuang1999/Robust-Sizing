@@ -73,36 +73,30 @@ double sim(vector <double> &load_trace, vector <double> &solar_trace,
     size_t trace_length_solar = solar_trace.size();
     size_t trace_length_load = load_trace.size();
 
-	double c = 0.0;
-	double d = 0.0;
-	double max_c = 0.0;
-	double max_d = 0.0;
-    size_t index_t_solar;
-    size_t index_t_load;
-
 	for (size_t t = start_index; t < end_index; t++)
 	{
 		// wrap around to the start of the trace if we hit the end.
-		index_t_solar = t % trace_length_solar;
-		index_t_load = t % trace_length_load;
+		const double total_solar = solar_trace[t % trace_length_solar] * pv;
+		const double total_load = load_trace[t % trace_length_load];
 
-		load_sum += load_trace[index_t_load];
+		load_sum += total_load;
 
-		// first, calculate how much power is available for charging, and how much is needed to discharge
-		c = fmax(solar_trace[index_t_solar]*pv - load_trace[index_t_load],0);
-		d = fmax(load_trace[index_t_load] - solar_trace[index_t_solar]*pv, 0);
+        // first, calculate how much power is available for charging, and how much is needed to discharge
+        if (total_solar > total_load) {
+            const double c = total_solar - total_load;
+            const double max_c = fmin(calc_max_charging(c,b), alpha_c);
+            b = b + max_c*eta_c*T_u;
+        } else {
+            const double d = total_load - total_solar;
+            const double max_d = fmin(calc_max_discharging(d,b), alpha_d);
+            b = b - max_d*eta_d*T_u;
 
-		// constrain the power
-		max_c = fmin(calc_max_charging(c,b), alpha_c);
-		max_d = fmin(calc_max_discharging(d,b), alpha_d);
-
-		b = b + max_c*eta_c*T_u - max_d*eta_d*T_u;
-
-		// if we didnt get to discharge as much as we wanted, there is a loss
-		if (max_d < d) {
-			loss_events += 1;
-			load_deficit += (d - max_d);
-		}
+            // if we didnt get to discharge as much as we wanted, there is a loss
+            if (max_d < d) {
+                loss_events += 1;
+                load_deficit += (d - max_d);
+            }
+        }
 	}
 
 	if (metric == 0) {

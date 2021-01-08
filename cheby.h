@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "common.h"
+#include "params.h"
 #include "simulate_system.h"
 
 SimulationResult calculate_sample_bound(vector < vector <SimulationResult> > &sizing_curves, double epsilon, double confidence);

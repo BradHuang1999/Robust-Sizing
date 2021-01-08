@@ -3,7 +3,7 @@
 #define SNC_LOLP_PERTRACE_H
 
 #include <vector>
-#include "common.h"
+#include "params.h"
 
 using namespace std;
 

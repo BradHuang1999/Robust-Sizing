@@ -1,13 +1,5 @@
-#include <fstream>
-#include <sstream>
-#include <cstring>
-#include <cstdlib>
-#include <vector>
-#include <iostream>
-#include <iomanip>
-#include <algorithm>
 #include "simulate_system.h"
-#include "common.h"
+#include "params.h"
 #include "cheby.h"
 
 using namespace std;
@@ -19,7 +11,7 @@ using namespace std;
 // metric: 0 for LOLP, 1 for unmet load
 // epsilon: number in range [0,1] representing LOLP or unmet load fraction.
 // chunk_size: length of time (in days)
-SimulationResult run_simulations(vector<double> &load, vector<double> &solar, int metric, size_t number_of_chunks)
+SimulationResult run_simulations()
 {
 	vector<vector<SimulationResult>> results;
 
@@ -33,10 +25,10 @@ SimulationResult run_simulations(vector<double> &load, vector<double> &solar, in
 	// print all of the curves
 	int chunk_index = 1;
 	cout << "DEBUG: sizing_curves" << endl;
-	for (vector<vector<SimulationResult>>::iterator it = results.begin(); it != results.end(); ++it, ++chunk_index) {
+	for (auto it = results.begin(); it != results.end(); ++it, ++chunk_index) {
 		cout << "chunk_" << chunk_index << endl;
-		for (vector<SimulationResult>::iterator it2 = it->begin() ; it2 != it->end(); ++it2) {
-			cout << it2->B << "\t" << it2->C << "\t" << it2->cost << endl;
+		for (auto & it2 : *it) {
+			cout << it2.B << "\t" << it2.C << "\t" << it2.cost << endl;
 		}
 	}
 	cout << "DEBUG: sizing_curves_end" << endl;
@@ -47,7 +39,6 @@ SimulationResult run_simulations(vector<double> &load, vector<double> &solar, in
 }
 
 int main(int argc, char ** argv) {
-	
 	int input_process_status = process_input(argc, argv, true);
 
 	if (input_process_status) {
@@ -55,7 +46,7 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 	
-	SimulationResult sr = run_simulations(load, solar, metric, number_of_chunks);
+	SimulationResult sr = run_simulations();
 	cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
 
 	return 0;

@@ -1,55 +1,17 @@
-#include <fstream>
-#include <sstream>
 #include <cstring>
 #include <cstdlib>
 #include <vector>
-#include <iostream>
 #include <climits>
 
-#include "common.h"
+#include "params.h"
 
-double B_inv; // cost per cell
 double PV_inv; // cost per unit (kW) of PV
 
-double cells_min;
-double cells_max;
-double cells_step; // search in step of x cells
 double pv_min;
 double pv_max;
 double pv_step; // search in steps of x kW
 
-double epsilon;
-double confidence;
-int metric;
-size_t days_in_chunk;
-size_t chunk_size;
-size_t chunk_step;
-
-vector<double> load;
 vector<double> solar;
-
-vector<double> read_data_from_file(istream &datafile, int limit = INT_MAX) {
-
-    vector <double> data;
-
-	if (datafile.fail()) {
-    	data.push_back(-1);
-    	cerr << errno << ": read data file failed." << endl;
-    	return data;
-  	}
-
-    // read data file into vector
-    string line;
-    double value;
-
-    for (int i = 0; i < limit && getline(datafile, line); ++i) {
-    	istringstream iss(line);
-    	iss >> value;
-    	data.push_back(value);
-    }
-
-    return data;
-}
 
 int process_input(int argc, char **argv, bool process_metric_input) {
     
@@ -64,7 +26,7 @@ int process_input(int argc, char **argv, bool process_metric_input) {
 #endif
 
     string inv_B_string = argv[++i];
-    B_inv = stod(inv_B_string)*kWh_in_one_cell; // convert from per-kWh to per-cell cost
+    B_inv = stod(inv_B_string) * kWh_in_one_cell; // convert from per-kWh to per-cell cost
 
 #ifdef DEBUG
     cout << "inv_B_string = " << inv_B_string 
@@ -76,7 +38,7 @@ int process_input(int argc, char **argv, bool process_metric_input) {
 
     // set default pv_min and pv_step
     pv_min = 0;
-    pv_step = (pv_max - pv_min) / num_pv_steps;
+    pv_step = (pv_max - pv_min) / num_steps;
 
 #ifdef DEBUG
     cout << "pv_max_string = " << pv_max_string
@@ -91,7 +53,7 @@ int process_input(int argc, char **argv, bool process_metric_input) {
 
     // set default cells_min and cells_step
     cells_min = 0;
-    cells_step = (cells_max - cells_min) / num_cells_steps;
+    cells_step = (cells_max - cells_min) / num_steps;
 
 #ifdef DEBUG
     cout << "cells_max_string = " << cells_max_string

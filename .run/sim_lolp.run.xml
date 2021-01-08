@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="sim_lolp" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="2000 500 70 225 0 0.01 0.95 100 example_inputs/load.txt example_inputs/pv.txt" REDIRECT_INPUT="false" WORKING_DIR="file://$ProjectFileDir$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Robust_Sizing" TARGET_NAME="sim_lolp" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Robust_Sizing" RUN_TARGET_NAME="sim_lolp">
+  <configuration default="false" name="sim_lolp" type="CMakeRunConfiguration" factoryName="Application" singleton="false" PROGRAM_PARAMS="2000 500 70 225 0 0.01 0.95 100 example_inputs/load.txt example_inputs/pv.txt" REDIRECT_INPUT="false" WORKING_DIR="file://$ProjectFileDir$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Robust_Sizing" TARGET_NAME="sim_lolp" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Robust_Sizing" RUN_TARGET_NAME="sim_lolp">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>

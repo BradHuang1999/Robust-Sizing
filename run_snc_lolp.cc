@@ -6,7 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include "snc_lolp_pertrace.h"
-#include "common.h"
+#include "params.h"
 
 using namespace std;
 
