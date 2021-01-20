@@ -6,9 +6,12 @@
 #define ROBUST_SIZING_PARAMS_MULTIROOF_H
 
 #include "params_common.h"
+#include <utility>
 #include <valarray>
 
 const size_t static runs_per_chunk = 5;
+
+extern string output_folder_path; // an optional path to output process file
 
 extern size_t n_solars;
 
@@ -28,12 +31,14 @@ struct SimulationMultiRoofResult {
     double B;
     valarray<double> PVs;
     double cost;
-    size_t chunk_start;
 
-    SimulationMultiRoofResult(size_t chunk_start = -1): feasible(false), chunk_start(chunk_start) {}
+    SimulationMultiRoofResult() :
+            feasible(false), B(INFTY), PVs(n_solars), cost(INFTY) {
+        PVs = INFTY;
+    }
 
-    SimulationMultiRoofResult(double B_val, valarray<double>& PVs_val, size_t chunk_start = -1):
-            feasible(true), B(B_val), PVs(PVs_val), chunk_start(chunk_start)
+    SimulationMultiRoofResult(double B_val, valarray<double> PVs_val):
+            feasible(true), B(B_val), PVs(move(PVs_val))
     {
         cost = B * B_inv;
         for (size_t i = 0; i < n_solars; ++i) {
@@ -46,33 +51,10 @@ struct SimulationMultiRoofResult {
 
 public:
 
-    string cells_pv_serialize() const {
-        stringstream ss;
-        ss.precision(8);
-        ss << (B * kWh_in_one_cell);
-        for (const double &pv: PVs) {
-            ss << "," << pv;
-        }
-        return ss.str();
-    }
+    string cells_pv_serialize() const;
 
-    friend ostream& operator<<( ostream& os, const SimulationMultiRoofResult& result) {
-        if (result.feasible) {
-            os << result.cells_pv_serialize() << "," << result.cost;
-        } else {
-            os << "infeasible";
-        }
-
-        if (result.chunk_start != -1) {
-            os << "," << result.chunk_start;
-        }
-
-        return os;
-    }
-
+    friend ostream& operator<< (ostream& os, const SimulationMultiRoofResult& result);
 };
-
-size_t calc_chebyshev_number_of_chunks();
 
 void update_number_of_chunks(size_t nchunks=number_of_chunks);
 

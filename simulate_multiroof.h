@@ -26,40 +26,47 @@ double static default_adagrad_step_size = 1;
 double static cost_threshold = 50;
 size_t static mean_window_size = 200;
 size_t static adagrad_max_it = 20000;
+size_t static adagrad_stepsize = 3;
 
 extern size_t total_sim_called;
 
-double sim(vector <double> &load_trace, vector<vector<double>> &solar_traces,
-           size_t start_index, size_t end_index, double cells, valarray<double> pvs, double b_0);
+double sim(
+        const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+        size_t start_index, size_t end_index, double cells, const valarray<double> &pvs,
+        double b_0 = 0);
 
 vector<SimulationMultiRoofResult> simulate(
-        vector<double> &load_trace, vector<vector<double>> &solar_traces,
-        size_t start_index, size_t end_index, double b_0);
+        const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+        size_t start_index, size_t end_index, double b_0 = 0);
 
 SimulationMultiRoofResult binary_search_result(
-        vector<double> &load_trace, vector<vector<double>> &solar_traces,
-        size_t start_index, size_t end_index, valarray<double> &pvs, double b_0 = 0,
+        const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+        size_t start_index, size_t end_index, const valarray<double> &pvs, double b_0 = 0,
         double cells_U = cells_max, double cells_L = cells_min);
 
-vector<SimulationMultiRoofResult> simulate_deterministic_adagrad(
-        vector<double> &load_trace, vector<vector<double>> &solar_traces, size_t start_index, size_t end_index,
-        valarray<double> &init_pv, double b_0 = 0, double step_size = default_adagrad_step_size, double fudge_factor = 1e-6);
+vector<SimulationMultiRoofResult>
+simulate_deterministic_adagrad(
+        const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+        size_t start_index, size_t end_index, const valarray<double> &init_pv,
+        const valarray<bool> &is_zeros, double b_0 = 0, double fudge_factor = 1e-6);
 
 double random_simulate_cheroff(
-        vector <double> &load_trace, vector<vector<double>> &solar_traces,
+        const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
         double cells, valarray<double> &pvs, double b_0 = 0);
 
 double deterministic_simulate_cheroff(
-        vector <double> &load_trace, vector<vector<double>> &solar_traces,
+        const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
         double cells, valarray<double> &pvs, double b_0 = 0);
 
 double get_cheroff(double p_tilde);
 
 double chernoff_result(
-        vector <double> &load_trace, vector<vector<double>> &solar_traces,
+        const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
         double cells, valarray<double> &pvs, double b_0 = 0);
 
 vector<SimulationMultiRoofResult>
-tabu_cheroff(vector<double> &load_trace, vector<vector<double>> &solar_traces, double target_p, double b_0 = 0);
+tabu_cheroff(
+        const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
+        double target_p, double b_0 = 0);
 
 #endif //ROBUST_SIZING_SIMULATE_MULTIROOF_H

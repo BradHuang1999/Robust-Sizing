@@ -6,6 +6,8 @@
 
 using namespace std;
 
+string output_folder_path;
+
 size_t n_solars;
 
 valarray<double> pv_mins;
@@ -17,12 +19,18 @@ valarray<double> PV_invs;
 
 vector<vector<double>> solar;
 
-size_t calc_chebyshev_number_of_chunks() {
-    double asymptote = (double)(n_solars + 1) / (1 - confidence);
-    double lambda2 = asymptote * lambda_factor;
-    double beta = lambda_factor - 1;
-    double eta = (lambda2 + sqrt(lambda2 * lambda2 - 4 * beta)) / (2 * beta);
-    return (size_t)(eta + 1);
+string SimulationMultiRoofResult::cells_pv_serialize() const {
+    stringstream ss;
+    ss.precision(8);
+    ss << (B * kWh_in_one_cell);
+    for (const double &pv: PVs) {
+        ss << "," << pv;
+    }
+    return ss.str();
+}
+
+ostream& operator<< (ostream& os, const SimulationMultiRoofResult& result) {
+    return os << result.cells_pv_serialize() << "," << result.cost;
 }
 
 void update_number_of_chunks(size_t nchunks) {
@@ -46,6 +54,9 @@ void update_number_of_chunks(size_t nchunks) {
 int process_input(int argc, char **argv) {
 
     int i = 0;
+
+    // output_folder_path
+    output_folder_path = argv[++i];
 
     // n_solars
     string n_solars_string = argv[++i];
@@ -230,8 +241,6 @@ int process_input(int argc, char **argv) {
             return 1;
         }
     }
-
-    update_number_of_chunks(calc_chebyshev_number_of_chunks());
 
     return 0;
 }

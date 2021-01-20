@@ -23,7 +23,8 @@ vector<vector<SimulationMultiRoofResult>> run_simulations()
     for (size_t chunk_num = 0, chunk_start = 0; chunk_num < number_of_chunks; chunk_num += 1, chunk_start += chunk_step)
     {
         for (size_t run = 0; run < runs_per_chunk; ++run) {
-            vector<SimulationMultiRoofResult> pareto_set = simulate(load, solar, chunk_start, chunk_start + chunk_size, 0);
+            vector<SimulationMultiRoofResult> pareto_set = simulate(
+                    load, solar, chunk_start, chunk_start + chunk_size, 0);
             results.push_back(move(pareto_set));
         }
     }

@@ -2,32 +2,45 @@
 // Created by Brad Huang on 9/8/20.
 //
 
-#include "simulate_multiroof.h"
 #include "params_multiroof.h"
+#include "cheby_multiroof.h"
+#include "simulate_multiroof.h"
+
 #include <memory>
-#include <valarray>
 #include <ctime>
 #include <iomanip>
+#include <filesystem>
 
 struct curr_time {
     const char *fmt;
-    curr_time(const char *fmt) : fmt(fmt) {}
+    const time_t t;
+
+    curr_time(const char *fmt) : fmt(fmt), t(time(nullptr)) {}
+
+    _Put_time<char> put() const {
+        tm *loc_t = localtime(&t);
+        return put_time(loc_t, fmt);
+    }
 };
 
-tm *get_local_time() {
-    auto t = time(nullptr);
-    return localtime(&t);
+ostream& operator<<( ostream& os, const curr_time& ct) {
+    return os << ct.put();
 }
 
-ostream& operator<<( ostream& os, const curr_time ct) {
-    tm *local_time = get_local_time();
-    os << put_time(local_time, ct.fmt);
+template<typename T>
+std::ostream& operator<<( std::ostream& os, const std::valarray<T>& v ) {
+    os << "{ ";
+    for (const T& d: v) {
+        os << d << " ";
+    }
+    os << "}";
     return os;
 }
 
 void adagrad_search(size_t start_index, valarray<double> init_pv, double step_size) {
+    valarray<bool> is_zeros = pv_maxs == 0;
     vector<SimulationMultiRoofResult> adagrad_results = simulate_deterministic_adagrad(
-            load, solar, start_index, start_index + chunk_size, init_pv, 0, step_size);
+            load, solar, start_index, start_index + chunk_size, init_pv, is_zeros);
 
     stringstream filename_ss;
     filename_ss << "results/adagrad_search/" << curr_time("%m_%d_%H_%M")
@@ -75,9 +88,9 @@ void grid_search(size_t start_index) {
     }
 }
 
-SimulationMultiRoofResult min(const vector<SimulationMultiRoofResult> &results) {
-    SimulationMultiRoofResult min_result = results[0];
-    double min_val = results[0].cost;
+SimulationMultiRoofResult min_cost(const vector<SimulationMultiRoofResult> &results) {
+    SimulationMultiRoofResult min_result;
+    double min_val = INFTY;
     for (const auto& s: results) {
         if (s.cost < min_val) {
             min_val = s.cost;
@@ -87,51 +100,212 @@ SimulationMultiRoofResult min(const vector<SimulationMultiRoofResult> &results) 
     return min_result;
 }
 
-void full_search(const string& foldername="") {
-    valarray<double> pv1_maxs = {pv_maxs[0], 0};
-    valarray<double> pv2_maxs = {0, pv_maxs[1]};
+SimulationMultiRoofResult full_search(const string& foldername, const curr_time& ct) {
+    stringstream adagrad_results_ss;
+    adagrad_results_ss << foldername
+                       << ct
+                       << "_daysinchunk=" << days_in_chunk
+                       << "_conf=" << confidence
+                       << "_epsilon=" << epsilon
+                       << ".csv";
+    ofstream adagrad_results_os(adagrad_results_ss.str());
+    adagrad_results_os << "type,battery,";
+    for (size_t i = 0; i < n_solars; ++i) {
+        adagrad_results_os << "pv" << i << ",";
+    }
+    adagrad_results_os << "cost" << endl;
 
-    vector<SimulationMultiRoofResult> adagrad_mins, adagrad_pv1_mins, adagrad_pv2_mins;
+    stringstream cheby_results_ss;
+    cheby_results_ss << foldername << "cheby/";
+    filesystem::create_directory(cheby_results_ss.str());
+    cheby_results_ss << ct
+                     << "_daysinchunk=" << days_in_chunk
+                     << "_conf=" << confidence
+                     << "_epsilon=" << epsilon
+                     << ".csv";
+    ofstream cheby_results_os(cheby_results_ss.str());
+    cheby_results_os << "type,battery,";
+    for (size_t i = 0; i < n_solars; ++i) {
+        cheby_results_os << "pv" << i << ",";
+    }
+    cheby_results_os << "cost" << endl;
 
-    stringstream filename_ss;
-    filename_ss << "results/full_search/" << foldername
-                << curr_time("%m_%d_%H_%M")
-                << "_daysinchunk=" << days_in_chunk
-                << "_conf=" << confidence
-                << "_epsilon=" << epsilon
-                << ".csv";
+    vector<SimulationMultiRoofResult> min_chebys;
 
-    ofstream os(filename_ss.str());
-    os << "type,battery,pv1,pv2,cost,chunk_start" << endl;
+    // combinatorial explosion
+    for (size_t type = 1; type < (1u << n_solars); ++type) {
+        cout << "\n--------------------- start of type " << type << " ---------------------" << endl;
+        cout << endl << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
 
-    for (size_t chunk_num = 0; chunk_num < number_of_chunks; chunk_num += 1)
-    {
-        size_t chunk_start = chunk_num * chunk_step;
+        valarray<double> pv_start = pv_maxs;
+        valarray<bool> is_zeros = (pv_maxs == (double)0);
 
-        vector<SimulationMultiRoofResult> adagrad_results = simulate_deterministic_adagrad(
-                load, solar, chunk_start, chunk_start + chunk_size, pv_maxs, 0, 3);
-        adagrad_mins.push_back(min(adagrad_results));
+        bool skip = false;
+        for (size_t i = 0; i < n_solars; ++i) {
+            if ((type & (1u << i)) == 0) {
+                if (is_zeros[i]) {
+                    skip = true;
+                    break;
+                }
 
-        vector<SimulationMultiRoofResult> adagrad_pv1_results = simulate_deterministic_adagrad(
-                load, solar, chunk_start, chunk_start + chunk_size, pv1_maxs, 0, 3);
-        adagrad_pv1_mins.push_back(min(adagrad_pv1_results));
+                pv_start[i] = 0;
+                is_zeros[i] = true;
+            }
+        }
+        if (skip) {
+            continue;
+        }
 
-        vector<SimulationMultiRoofResult> adagrad_pv2_results = simulate_deterministic_adagrad(
-                load, solar, chunk_start, chunk_start + chunk_size, pv2_maxs, 0, 3);
-        adagrad_pv2_mins.push_back(min(adagrad_pv2_results));
+        cout << "training len: " << load.size() << endl;
+        cout << "pv_start: " << pv_start << endl;
+        cout << "is_zeros: " << is_zeros << endl;
+
+        update_chebyshev_params(is_zeros);
+        update_number_of_chunks();
+
+        cout << "days_in_chunk = " << days_in_chunk << endl
+             << "conf = " << confidence << endl
+             << "epsilon = " << epsilon << endl
+             << "lambda2 = " << lambda2 << endl
+             << "number_of_chunks = " << number_of_chunks << endl
+             << endl;
+
+        vector<SimulationMultiRoofResult> min_adagrads;
+
+        for (size_t chunk_num = 0; chunk_num < number_of_chunks; chunk_num += 1) {
+            size_t chunk_start = chunk_num * chunk_step;
+            vector<SimulationMultiRoofResult> adagrad_results = simulate_deterministic_adagrad(
+                    load, solar, chunk_start, chunk_start + chunk_size, pv_start, is_zeros);
+
+            SimulationMultiRoofResult min_adagrad_result = min_cost(adagrad_results);
+            min_adagrads.push_back(min_adagrad_result);
+        }
+
+        // print out min_adagrad points
+        for (const SimulationMultiRoofResult& r: min_adagrads) {
+            adagrad_results_os << type << "," << r << endl;
+        }
+
+        // get cheby bound
+        vector<SimulationMultiRoofResult> cheby_results = get_chebyshev_bound(min_adagrads, is_zeros);
+
+        // print cheby bound
+        for (const SimulationMultiRoofResult& r: cheby_results) {
+            cheby_results_os << type << "," << r << endl;
+        }
+
+        SimulationMultiRoofResult min_cheby_result = min_cost(cheby_results);
+        min_chebys.push_back(min_cheby_result);
+
+        cout << "min_cheby_result: " << min_cheby_result << endl;
+        cout << "\nOperation ended at " << curr_time("%m/%d %H:%M:%S") << endl;
     }
 
-    for (SimulationMultiRoofResult& s: adagrad_mins) {
-        os << "0," << s << endl;
-    }
-    for (SimulationMultiRoofResult& s: adagrad_pv1_mins) {
-        os << "1," << s << endl;
-    }
-    for (SimulationMultiRoofResult& s: adagrad_pv2_mins) {
-        os << "2," << s << endl;
-    }
+    adagrad_results_os.close();
+    cheby_results_os.close();
 
-    os.close();
+    SimulationMultiRoofResult ret_result = min_cost(min_chebys);
+    cout << "\n--------------------- final result ---------------------" << endl;
+    cout << ret_result << endl;
+
+    return ret_result;
+}
+
+void full_search_with_cross_validation(const string& foldername) {
+    curr_time ct("%m_%d_%H_%M_%S");
+
+    for (size_t s = 0; s < n_solars; ++s) {
+        if (solar[s].size() != load.size()) {
+            throw range_error("solar size is not equal to load size. cannot perform cross validation");
+        }
+    }
+    size_t tot_yrs = load.size() / T_yr;
+
+    vector<double> load_bk((tot_yrs - 1) * T_yr);
+    swap(load, load_bk);
+
+    vector<vector<double>> solar_bk(n_solars, vector<double>((tot_yrs - 1) * T_yr));
+    swap(solar, solar_bk);
+
+    vector<double> load_validation(T_yr);
+    vector<vector<double>> solar_validation(n_solars, vector<double>(T_yr));
+
+    for (size_t validation_yr = 0; validation_yr < tot_yrs; ++validation_yr) {
+        cout << "\n\n------------------------------- validation year " << validation_yr << " -------------------------------\n\n" << endl;
+
+        size_t validation_begin = validation_yr * T_yr;
+        size_t validation_end = (validation_yr + 1) * T_yr;
+
+        // copy from ..v_begin to load (training set)
+        copy(load_bk.begin(),
+             load_bk.begin() + validation_begin,
+             load.begin());
+        // copy from v_begin..v_end to load_validation
+        copy(load_bk.begin() + validation_begin,
+             load_bk.begin() + validation_end,
+             load_validation.begin());
+        // copy from v_end.. to load (training set)
+        copy(load_bk.begin() + validation_end,
+             load_bk.end(),
+             load.begin() + validation_begin);
+
+        for (size_t s = 0; s < n_solars; ++s) {
+            // copy from ..v_begin to load (training set)
+            copy(solar_bk[s].begin(),
+                 solar_bk[s].begin() + validation_begin,
+                 solar[s].begin());
+            // copy from v_begin..v_end to load_validation
+            copy(solar_bk[s].begin() + validation_begin,
+                 solar_bk[s].begin() + validation_end,
+                 solar_validation[s].begin());
+            // copy from v_end.. to load (training set)
+            copy(solar_bk[s].begin() + validation_end,
+                 solar_bk[s].end(),
+                 solar[s].begin() + validation_begin);
+        }
+
+        stringstream full_search_foldername_ss;
+        full_search_foldername_ss << "results/full_search/" << foldername;
+        filesystem::create_directory(full_search_foldername_ss.str());
+
+        full_search_foldername_ss << "/yr" << validation_yr << "/";
+        filesystem::create_directory(full_search_foldername_ss.str());
+
+        total_sim_called = 0;
+        time_t t_before = time(nullptr);
+        SimulationMultiRoofResult train_result = full_search(full_search_foldername_ss.str(), ct);
+        time_t t_after = time(nullptr);
+
+        double validation_loss;
+        if (train_result.feasible) {
+            validation_loss = sim(load_validation, solar_validation,
+                                         0, T_yr, train_result.B, train_result.PVs);
+            cout << "sizing feasible, validation loss = " << validation_loss << endl;
+        } else {
+            validation_loss = INFTY;
+            cout << "infeasible sizing" << endl;
+        }
+
+        // print out a the returned cost line on summary2.csv
+        stringstream cheby_summary_ss;
+        cheby_summary_ss << "results/full_search/cheby_summary/summary" << n_solars << ".csv";
+        ofstream cheby_summary_os;
+        cheby_summary_os.open(cheby_summary_ss.str(), ios_base::app);
+        cheby_summary_os << ct << ","
+                         << foldername << ","
+                         << validation_yr << ","
+                         << days_in_chunk << ","
+                         << confidence << ","
+                         << epsilon << ","
+                         << train_result.feasible << ","
+                         << train_result << ","
+                         << validation_loss << ","
+                         << (t_after - t_before) << ","
+                         << total_sim_called << endl;
+
+        cout << "\n\n------------------------------- validation year " << validation_yr
+             << " finished -------------------------------\n\n" << endl;
+    }
 }
 
 void chernoff_grid_map() {
@@ -237,27 +411,28 @@ void chernoff_tabu_search(double target_p, const string& foldername="") {
     if (ret.empty()) {
         cout << "(no viable result)";
     } else {
-        SimulationMultiRoofResult min_search = min(ret);
+        SimulationMultiRoofResult min_search = min_cost(ret);
         cout << min_search;
     }
 }
 
 void experiment(const string& foldername="") {
-    vector<double> epsilon_vals {0.1, 0.3};
+//    vector<double> epsilon_vals {0.1, 0.3};
 //    vector<double> epsilon_vals {0.1};
 //    vector<double> epsilon_vals {0.3};
+    vector<double> epsilon_vals {0.5};
 
-//    vector<double> p_vals {0.8, 0.9};
-    vector<double> p_vals {0.5};
+    vector<double> p_vals {0.9, 0.8, 0.5};
+//    vector<double> p_vals {0.5};
 //    vector<double> p_vals {0.8};
 //    vector<double> p_vals {0.9};
 
-    vector<double> conf_vals {0.85, 0.95};
+    vector<double> conf_vals {0.95, 0.85};
 //    vector<double> conf_vals {0.85};
 //    vector<double> conf_vals {0.95};
 
-    vector<size_t> days_in_chunk_vals {100, 200, 365};
-//    vector<size_t> days_in_chunk_vals {365};
+//    vector<size_t> days_in_chunk_vals {100, 200, 365};
+    vector<size_t> days_in_chunk_vals {365};
 
     cout << "\nsim_type"
          << ",days_in_chunk"
@@ -305,27 +480,26 @@ void experiment(const string& foldername="") {
                          << "," << total_sim_called
                          << endl;
 
-//                    // RUN CHEBYSHEV EXPERIMENT
-//                    epsilon = effective_epsilon;
-//
-//                    cout << "chebyshev"
-//                         << "," << days_in_chunk_val
-//                         << "," << conf_val
-//                         << "," << epsilon_val
-//                         << "," << p_val
-//                         << "," << effective_epsilon
-//                         << ",";
-//
-//                    time_t t_before_cheby = time(nullptr);
-//                    update_number_of_chunks(calc_chebyshev_number_of_chunks());
-//                    total_sim_called = 0;
-//                    full_search(foldername);
-//                    time_t t_after_cheby = time(nullptr);
-//                    time_t t_duration_cheby = t_after_cheby - t_before_cheby;
-//
-//                    cout << "-1,-1,-1,-1," << t_duration_cheby
-//                         << "," << total_sim_called
-//                         << endl;
+                    // RUN CHEBYSHEV EXPERIMENT
+                    epsilon = effective_epsilon;
+
+                    cout << "chebyshev"
+                         << "," << days_in_chunk_val
+                         << "," << conf_val
+                         << "," << epsilon_val
+                         << "," << p_val
+                         << "," << effective_epsilon
+                         << ",";
+
+                    time_t t_before_cheby = time(nullptr);
+                    total_sim_called = 0;
+                    full_search(foldername, curr_time("%m_%d_%H_%M_%S"));
+                    time_t t_after_cheby = time(nullptr);
+                    time_t t_duration_cheby = t_after_cheby - t_before_cheby;
+
+                    cout << "-1,-1,-1,-1," << t_duration_cheby
+                         << "," << total_sim_called
+                         << endl;
                 }
             }
         }
@@ -336,10 +510,17 @@ int main(int argc, char **argv) {
 
     int input_process_status = process_input(argc, argv);
 
-    cout << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
+//    // manually change parameters. not recommended.
+//    days_in_chunk = 100;
+//    confidence = 0.85;
+//    epsilon = 0.1;
+//    double p = 0.8;
+//    update_number_of_chunks(1000);
 
-//    calc_chebyshev_number_of_chunks();
-//    update_number_of_chunks(32);
+    cout << "num_steps = " << num_steps << endl;
+    cout << "output_folder_path = " << output_folder_path << endl << endl;
+
+    cout << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
 
     if (input_process_status) {
         cerr << "Illegal input" << endl;
@@ -349,45 +530,13 @@ int main(int argc, char **argv) {
 //    grid_search(32240);
 //    adagrad_search(15000, pv_maxs, 3);
 //    adagrad_search(32240, {pv_maxs[0], 0}, 3);
-
+//
 //    chernoff_grid_map(1000);
-//    chernoff_search(0.9, 1000);
+//    chernoff_search(0.9);
+//    chernoff_tabu_search(p, output_folder_path);
 
-//    12_23_02_18_daysinchunk=100_conf=0.85_epsilon=0.1_targetp=0.8.csv
-//    days_in_chunk = 100;
-//    confidence = 0.85;
-//    epsilon = 0.1;
-//    double p = 0.8;
-//    update_number_of_chunks(1000);
-
-//    chernoff_search(p);
-//    chernoff_tabu_search(p, "load=3482_pv=7989 6423/");
-
-    string folder_name = "load=3482_pv=7989 6423_numsteps=20/";
-
-    cout << "num_steps = " << num_steps << endl;
-    cout << "folder_name = " << folder_name << endl;
-
-    experiment(folder_name);
-
-//    confidence = 0.95;
-//    epsilon = 0.65;
-//    days_in_chunk = 365;
-//    update_number_of_chunks(1000);
-//
-//    valarray<double> pvs = {0, 5.9914981617647065};
-//    double cell = 7.952769535294118 / kWh_in_one_cell;
-//
-//    double p = random_simulate_cheroff(load, solar, cell, pvs);
-//    double pdelta = get_cheroff(p);
-//    cout << p << ", " << pdelta << endl;
-
-//    confidence = 0.95;
-//    epsilon = 1 - (0.9 * (1 - 0.1));
-//    days_in_chunk = 365;
-//    update_number_of_chunks(calc_chebyshev_number_of_chunks());
-//
-//    full_search("load=6423_pv=7989 6423/");
+//    full_search(output_folder_path);
+    full_search_with_cross_validation(output_folder_path);
 
     cout << "\nOperation ended at " << curr_time("%m/%d %H:%M:%S") << endl;
 

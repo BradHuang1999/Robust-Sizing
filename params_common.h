@@ -41,11 +41,6 @@ extern double cells_step; // search in step of x cells
 extern size_t number_of_chunks;
 
 /**
- * lambda_factor: this is how much excess lambda^2 we tolerate
- */
-constexpr double static lambda_factor = 1.1;
-
-/**
  * T_u: this is the time unit, representing the number of hours in
  *      each time slot of the load and solar traces
  */
@@ -58,7 +53,7 @@ constexpr size_t static T_u = 1;
 const size_t static T_yr = 365 * 24 / T_u;
 
 double static kWh_in_one_cell = 0.011284;
-constexpr double static num_steps = 20; // search in total of n steps
+constexpr double static num_steps = 100; // search in total of n steps
 
 double static INFTY = numeric_limits<double>::infinity();
 

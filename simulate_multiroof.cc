@@ -63,8 +63,8 @@ double calc_max_discharging(double power, double b_prev) {
 // Note: sim_year calls procedures calc_max_charging and calc_max_discharging.
 // You could potentially speed up the computation by expanding these functions into sim_year
 // to avoid procedure calls in this inner loop.
-double sim(vector <double> &load_trace, vector<vector<double>> &solar_traces,
-           size_t start_index, size_t end_index, double cells, valarray<double> pvs, double b_0)
+double sim(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+           size_t start_index, size_t end_index, double cells, const valarray<double> &pvs, double b_0)
 {
     ++total_sim_called;
 
@@ -87,7 +87,7 @@ double sim(vector <double> &load_trace, vector<vector<double>> &solar_traces,
 
         double total_solar = 0;
         for (size_t i = 0; i < n_solars; ++i) {
-            vector<double>& solar_trace = solar_traces[i];
+            const vector<double>& solar_trace = solar_traces[i];
             size_t t_index = t % solar_trace.size();
             total_solar += solar_trace[t_index] * pvs[i];
         }
@@ -123,7 +123,7 @@ double sim(vector <double> &load_trace, vector<vector<double>> &solar_traces,
 
 // Run simulation for provides solar and load trace to find cheapest combination of
 // load and solar that can meet the epsilon target
-vector<SimulationMultiRoofResult> simulate(vector<double> &load_trace, vector<vector<double>> &solar_traces,
+vector<SimulationMultiRoofResult> simulate(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
                                            size_t start_index, size_t end_index, double b_0)
 {
     vector<SimulationMultiRoofResult> pareto_set;
@@ -172,7 +172,7 @@ vector<SimulationMultiRoofResult> simulate(vector<double> &load_trace, vector<ve
             double loss = sim(load_trace, solar_traces, start_index, end_index, b_value, pv_values, b_0);
             if (loss < epsilon) {
                 found = true;
-                pareto_set.emplace_back(b_value, pv_values, start_index);
+                pareto_set.emplace_back(b_value, pv_values);
                 b_init = b_value;
             }
         }
@@ -197,8 +197,8 @@ vector<SimulationMultiRoofResult> simulate(vector<double> &load_trace, vector<ve
 }
 
 SimulationMultiRoofResult
-binary_search_result(vector<double> &load_trace, vector<vector<double>> &solar_traces, size_t start_index,
-                     size_t end_index, valarray<double> &pvs, double b_0, double cells_U, double cells_L)
+binary_search_result(const vector<double> &load_trace, const vector<vector<double>> &solar_traces, size_t start_index,
+                     size_t end_index, const valarray<double> &pvs, double b_0, double cells_U, double cells_L)
 {
     double loss_U = INFTY;
 
@@ -220,48 +220,45 @@ binary_search_result(vector<double> &load_trace, vector<vector<double>> &solar_t
     }
 
     if (loss_U <= epsilon) {
-        return SimulationMultiRoofResult(cells_U, pvs, start_index);
+        return SimulationMultiRoofResult(cells_U, pvs);
     } else {
-        return SimulationMultiRoofResult(start_index);
+        return SimulationMultiRoofResult();
     }
 }
 
-vector<SimulationMultiRoofResult> simulate_deterministic_adagrad(
-        vector<double> &load_trace, vector<vector<double>> &solar_traces, size_t start_index, size_t end_index,
-        valarray<double> &init_pv, double b_0, double step_size, double fudge_factor)
+vector<SimulationMultiRoofResult>
+simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+                               size_t start_index, size_t end_index, const valarray<double> &init_pv,
+                               const valarray<bool> &is_zeros, double b_0, double fudge_factor)
 {
-    size_t pv_n = init_pv.size();
-    valarray<bool> is_zero = init_pv == 0;
-
     default_random_engine generator;
 
     vector<normal_distribution<double>> distribution;
-    for (size_t t = 0; t < pv_n; ++t) {
+    for (size_t t = 0; t < n_solars; ++t) {
         distribution.emplace_back(0, pv_steps[t]);
     }
-
-    valarray<double> pv_values(init_pv);
-    valarray<double> g_ti(0.0, pv_n);
-
-    deque<double> mean_window;
-    double window_sum;
 
     vector<SimulationMultiRoofResult> ret;
 
     SimulationMultiRoofResult last_run_result = binary_search_result(
-            load_trace, solar_traces, start_index, end_index, pv_values, b_0);
+            load_trace, solar_traces, start_index, end_index, init_pv, b_0);
     if (!last_run_result.feasible) {
         return ret;
     }
+
+    valarray<double> pv_values(init_pv);
+    valarray<double> g_ti(0.0, n_solars);
+    deque<double> mean_window;
+    double window_sum = 0;
 
     for (size_t it_count = 0; it_count < adagrad_max_it; ++it_count) {
         ret.push_back(last_run_result);
 
         bool has_feasible = false;
-        valarray<double> grad(0.0, pv_n);
+        valarray<double> grad(0.0, n_solars);
 
-        for (size_t t = 0; t < pv_n; ++t) {
-            if (!is_zero[t]) {
+        for (size_t t = 0; t < n_solars; ++t) {
+            if (!is_zeros[t]) {
                 pv_values[t] += pv_steps[t];
                 SimulationMultiRoofResult next_step_result = binary_search_result(
                         load_trace, solar_traces, start_index, end_index, pv_values, b_0);
@@ -279,23 +276,30 @@ vector<SimulationMultiRoofResult> simulate_deterministic_adagrad(
         }
 
         g_ti += grad * grad;
-        pv_values -= step_size * (grad / (fudge_factor + sqrt(g_ti)));
+        pv_values -= adagrad_stepsize * (grad / (fudge_factor + sqrt(g_ti)));
 
-        for (size_t t = 0; t < pv_n; ++t) {
-            if (!is_zero[t]) {
+        for (size_t t = 0; t < n_solars; ++t) {
+            if (!is_zeros[t]) {
                 pv_values[t] += distribution[t](generator);
+                if (pv_values[t] < pv_steps[t]) {
+                    // force pv_values to be at least one step above 0.
+                    // comes to bite us when there any many panels and the absolute stepsize is too big
+                    //   that all traces return exactly one
+                    pv_values[t] = pv_steps[t];
+                }
             }
         }
-
-        pv_values[(pv_values != 0) && (pv_values < pv_steps)] = pv_steps[(pv_values != 0) && (pv_values < pv_steps)];
 
         SimulationMultiRoofResult curr_run_result = binary_search_result(
                 load_trace, solar_traces, start_index, end_index, pv_values, b_0);
         if (!curr_run_result.feasible) {
             return ret;
         }
+
+        // terminate adagrad if the difference between the mean window size and the current cost
+        //   is lower than cost_threshold
         if (it_count >= mean_window_size) {
-            if (window_sum / mean_window_size - curr_run_result.cost < cost_threshold) {
+            if (abs((window_sum / mean_window_size) - curr_run_result.cost) < cost_threshold) {
                 ret.push_back(curr_run_result);
                 return ret;
             }
@@ -313,13 +317,11 @@ vector<SimulationMultiRoofResult> simulate_deterministic_adagrad(
 }
 
 
-default_random_engine generator;
-
-double random_simulate_cheroff(vector <double> &load_trace, vector<vector<double>> &solar_traces,
+double random_simulate_cheroff(const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
         double cells, valarray<double> &pvs, double b_0) {
 
     uniform_int_distribution<size_t> start_index_dist(0, chunk_total);
-
+    default_random_engine generator;
 
     size_t n_target_satisfied = 0;
 
@@ -337,7 +339,7 @@ double random_simulate_cheroff(vector <double> &load_trace, vector<vector<double
 
 }
 
-double deterministic_simulate_cheroff(vector <double> &load_trace, vector<vector<double>> &solar_traces,
+double deterministic_simulate_cheroff(const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
         double cells, valarray<double> &pvs, double b_0) {
 
     size_t n_target_satisfied = 0;
@@ -367,7 +369,7 @@ double get_cheroff(double p_tilde) {
     return p_tilde - sqrt( -3 * p_tilde * log(1 - confidence) / number_of_chunks);
 }
 
-double chernoff_result(vector <double> &load_trace, vector<vector<double>> &solar_traces,
+double chernoff_result(const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
                        double cells, valarray<double> &pvs, double b_0) {
     double p_tilde = deterministic_simulate_cheroff(load_trace, solar_traces, cells, pvs, b_0);
     double p_delta = get_cheroff(p_tilde);
@@ -375,7 +377,7 @@ double chernoff_result(vector <double> &load_trace, vector<vector<double>> &sola
 }
 
 vector<SimulationMultiRoofResult>
-tabu_cheroff(vector<double> &load_trace, vector<vector<double>> &solar_traces, double target_p, double b_0) {
+tabu_cheroff(const vector <double> &load_trace, const vector<vector<double>> &solar_traces, double target_p, double b_0) {
     // search for an upper, pareto-efficient surface that
     // satisfies the cheroff bound
 
