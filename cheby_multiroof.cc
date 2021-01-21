@@ -23,12 +23,12 @@ void update_chebyshev_params(const valarray<bool>& is_zeros) {
     number_of_chunks = (size_t)(eta + 1);
 }
 
-RowVectorXd convert_to_rowvec(
+drowvec convert_to_rowvec(
         const SimulationMultiRoofResult& result,
         const valarray<bool>& is_zeros) {
 
     valarray<double> result_pvs = result.PVs[!is_zeros];
-    RowVectorXd ret(result_pvs.size() + 1);
+    drowvec ret(result_pvs.size() + 1);
     for (size_t i = 0; i < result_pvs.size(); ++i) {
         ret(i) = result_pvs[i];
     }
@@ -37,7 +37,7 @@ RowVectorXd convert_to_rowvec(
 }
 
 SimulationMultiRoofResult convert_to_result(
-        const RowVectorXd& vec,
+        const drowvec& vec,
         const valarray<bool>& is_zeros) {
 
     size_t arr_size = vec.size() - 1;
@@ -52,7 +52,7 @@ SimulationMultiRoofResult convert_to_result(
     return SimulationMultiRoofResult(vec(arr_size) / kWh_in_one_cell, result_arr);
 }
 
-MatrixXd convert_simulation_result_to_matrix(
+dmatrix convert_simulation_result_to_matrix(
         const vector<SimulationMultiRoofResult>& adagrad_sims,
         const valarray<bool>& is_zeros, bool normalize_battery) {
 
@@ -62,28 +62,28 @@ MatrixXd convert_simulation_result_to_matrix(
 
     size_t adagrad_size_x = adagrad_sims.size();
     size_t adagrad_size_y = adagrad_sims[0].PVs[!is_zeros].size();
-    MatrixXd ret(adagrad_size_x, adagrad_size_y + 1);
+    dmatrix ret(adagrad_size_x, adagrad_size_y + 1);
 
     for (size_t l = 0; l < adagrad_size_x; ++l) {
-        ret.row(l) = convert_to_rowvec(adagrad_sims[l], is_zeros);
+        dlib::set_rowm(ret, l) = convert_to_rowvec(adagrad_sims[l], is_zeros);
     }
 
     return ret;
 }
 
 inline double get_l(
-        const RowVectorXd& xi,
-        const RowVectorXd& mu_eta,
-        const MatrixXd& sigma_eta_inv) {
-    RowVectorXd xi_mueta_diff = xi - mu_eta;
-    return xi_mueta_diff * sigma_eta_inv * xi_mueta_diff.transpose();
+        const drowvec& xi,
+        const drowvec& mu_eta,
+        const dmatrix& sigma_eta_inv) {
+    drowvec xi_mueta_diff = xi - mu_eta;
+    return xi_mueta_diff * sigma_eta_inv * dlib::trans(xi_mueta_diff);
 }
 
-RowVectorXd get_cheby_steps(const valarray<bool>& is_zeros) {
+drowvec get_cheby_steps(const valarray<bool>& is_zeros) {
     valarray<double> pv_diffs = (pv_maxs - pv_mins) / cheby_num_steps;
     valarray<double> non_zero_pv_diffs = pv_diffs[!is_zeros];
     size_t non_zero_pv_diffs_size = non_zero_pv_diffs.size();
-    RowVectorXd ret(non_zero_pv_diffs_size + 1);
+    drowvec ret(non_zero_pv_diffs_size + 1);
     for (size_t l = 0; l < non_zero_pv_diffs_size; ++l) {
         ret(l) = non_zero_pv_diffs[l];
     }
@@ -91,14 +91,14 @@ RowVectorXd get_cheby_steps(const valarray<bool>& is_zeros) {
     return ret;
 }
 
-inline string to_string(const RowVectorXd& rv) {
+inline string to_string(const drowvec& rv) {
     stringstream ss;
     ss << rv;
     return ss.str();
 }
 
-inline bool lt(const RowVectorXd& a, const RowVectorXd& b) {
-    RowVectorXd diff = a - b;
+inline bool lt(const drowvec& a, const drowvec& b) {
+    drowvec diff = a - b;
     for (size_t l = 0; l < diff.size(); ++l) {
         if (diff(l) >= numeric_limits<double>::epsilon()) {
             return false;
@@ -118,33 +118,42 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         }
     }
 
-    MatrixXd sigma = convert_simulation_result_to_matrix(adagrad_sims, is_zeros);
+    dmatrix sigma = convert_simulation_result_to_matrix(adagrad_sims, is_zeros);
 
-    size_t eta = sigma.rows();
+    size_t eta = sigma.nr();
     cout << "eta=" << eta << endl;
 
     double l2 = (double)(eta * eta - 1) / ((1 - confidence) * eta * eta / (double)(non_zero_cols + 1) - eta);
     cout << "l2=" << l2 << endl;
 
-    RowVectorXd mu_eta = sigma.colwise().mean();
+    drowvec mu_eta(non_zero_cols);
+    for (size_t i = 0; i < non_zero_cols; ++i) {
+        mu_eta(i) = dlib::mean(dlib::colm(sigma, i));
+    }
     cout << "mu_eta=" << mu_eta << endl;
 
-    MatrixXd sigma_diff = sigma - mu_eta.replicate(eta, 1);
-    MatrixXd sigma_eta = sigma_diff.transpose() * sigma_diff / (eta - 1);
-    MatrixXd sigma_eta_inv = sigma_eta.inverse();
+//    dmatrix sigma_diff = sigma - mu_eta.replicate(eta, 1);
+    dmatrix sigma_diff(eta, non_zero_cols);
+    for (size_t l = 0; l < eta; ++l) {
+        dlib::set_rowm(sigma_diff, l) = dlib::rowm(sigma, l) - mu_eta;
+    }
+
+    dmatrix sigma_eta = dlib::trans(sigma_diff) * sigma_diff / (eta - 1);
+
+    dmatrix sigma_eta_inv = dlib::inv(sigma_eta);
 
     cout << "sigma_eta=" << endl << sigma_eta << endl << endl;
 
-    RowVectorXd cheby_mins = convert_to_rowvec(SimulationMultiRoofResult(cells_min, pv_mins), is_zeros);
-    RowVectorXd cheby_maxs = convert_to_rowvec(SimulationMultiRoofResult(cells_max, pv_maxs), is_zeros);
-    RowVectorXd cheby_steps = get_cheby_steps(is_zeros);
+    drowvec cheby_mins = convert_to_rowvec(SimulationMultiRoofResult(cells_min, pv_mins), is_zeros);
+    drowvec cheby_maxs = convert_to_rowvec(SimulationMultiRoofResult(cells_max, pv_maxs), is_zeros);
+    drowvec cheby_steps = get_cheby_steps(is_zeros);
 
     // Tabu search for the non-dominated, pareto-efficient boundary
     vector<SimulationMultiRoofResult> ret;
-    deque<pair<RowVectorXd, bool>> search_q;
+    deque<pair<drowvec, bool>> search_q;
     unordered_map<string, bool> seen;
 
-    auto is_outside = [&](const RowVectorXd& lxi) -> pair<bool, bool> {
+    auto is_outside = [&](const drowvec& lxi) -> pair<bool, bool> {
         string lxi_str = to_string(lxi);
         if (seen.count(lxi_str)) {
 //            cout << lxi_str << " -> (cached) " << boolalpha << seen[lxi_str] << endl;
@@ -161,7 +170,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
     for (size_t i = 0; i <= non_zero_cols; ++i) {
         double col_L = mu_eta[i], col_U = cheby_maxs(i);
         bool is_viable = false;
-        RowVectorXd bxi = mu_eta;
+        drowvec bxi = mu_eta;
 
         while (col_U - col_L > cheby_steps(i)) {
             double col_M = (col_L + col_U) / 2;
@@ -193,7 +202,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         const auto& curr_pair = search_q.front();
         search_q.pop_front();
 
-        RowVectorXd curr_xi = curr_pair.first;
+        drowvec curr_xi = curr_pair.first;
         bool curr_outside = curr_pair.second;
 
         bool all_lower_neighbor_inside = true;
@@ -201,12 +210,14 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         bool all_higher_neighbor_inside = true;
         bool all_higher_neighbor_outside = true;
 
-        vector<pair<RowVectorXd, bool>> neighbors;
+        cout << "curr_xi = " << curr_xi << " -> " << curr_outside << endl;
+
+        deque<pair<drowvec, bool>> neighbors;
 
         // test for all its neighbors
         for (size_t i = 0; i <= non_zero_cols; ++i) {
             // test for lower neighbor
-            RowVectorXd lower_xi = curr_xi;
+            drowvec lower_xi = curr_xi;
             lower_xi(i) -= cheby_steps(i);
             if (lt(mu_eta, lower_xi)) {
                 auto lower_outside = is_outside(lower_xi);
@@ -224,7 +235,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
             }
 
             // test for higher neighbor
-            RowVectorXd higher_xi = curr_xi;
+            drowvec higher_xi = curr_xi;
             higher_xi(i) += cheby_steps(i);
             auto higher_outside = is_outside(higher_xi);
             if (higher_outside.first) { // outside

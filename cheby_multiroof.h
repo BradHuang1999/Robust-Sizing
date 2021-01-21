@@ -7,10 +7,13 @@
 
 #include "params_multiroof.h"
 #include <stdexcept>
-#include <Eigen/Dense>
+#include <dlib/matrix.h>
+#include <dlib/matrix/matrix_la.h>
 
 using namespace std;
-using namespace Eigen;
+
+typedef dlib::matrix<double, 0, 0> dmatrix;
+typedef dlib::matrix<double, 1, 0> drowvec;
 
 // VARIABLES
 
@@ -39,7 +42,7 @@ void update_chebyshev_params(const valarray<bool>& is_zeros);
  * convert_simulation_result_to_matrix: convert vector of SimulationMultiRoofResult's
  *   to Eigen matrix. can be refactored to other modules
  */
-MatrixXd convert_simulation_result_to_matrix(
+dmatrix convert_simulation_result_to_matrix(
         const vector<SimulationMultiRoofResult>& adagrad_sims,
         const valarray<bool>& is_zeros, bool normalize_battery = true);
 
