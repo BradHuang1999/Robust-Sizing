@@ -27,6 +27,7 @@
     <generated>
       <config projectName="Robust_Sizing" targetName="sim_eue" />
       <config projectName="Robust_Sizing" targetName="sim_lolp_multiroof" />
+      <config projectName="Robust_Sizing" targetName="main_test" />
       <config projectName="Robust_Sizing" targetName="sim_eue_multiroof" />
       <config projectName="Robust_Sizing" targetName="sim_lolp" />
       <config projectName="Robust_Sizing" targetName="run_multiroof_test" />
@@ -43,32 +44,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dac637f0-02bd-4989-bf68-5beb1109eae7" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/run_multiroof_cheby_experiments.cc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.run/sim_eue.run.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.run/sim_eue.run.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.run/sim_lolp.run.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.run/sim_lolp.run.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.run/snc_eue.run.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.run/snc_eue.run.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.run/snc_lolp.run.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.run/snc_lolp.run.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/.ipynb_checkpoints/chebyshev_curve_analytics-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/.ipynb_checkpoints/chebyshev_curve_analytics-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/chebyshev_curve/.ipynb_checkpoints/chebyshev_curve_analytics-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/chebyshev_curve/.ipynb_checkpoints/chebyshev_curve_analytics-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/chebyshev_curve/chebyshev_curve_analytics.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/chebyshev_curve/chebyshev_curve_analytics.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/.ipynb_checkpoints/experiments_playground-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/.ipynb_checkpoints/experiments_playground-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/.ipynb_checkpoints/experiments_visualize-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/.ipynb_checkpoints/experiments_visualize-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/.ipynb_checkpoints/full_search_cheby-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/.ipynb_checkpoints/full_search_cheby-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/chebyshev_lambda.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/chebyshev_lambda.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/experiments_playground.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/experiments_playground.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/experiments_visualize.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/experiments_visualize.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/full_search_cheby.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/full_search_cheby.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cheby_multiroof.cc" beforeDir="false" afterPath="$PROJECT_DIR$/cheby_multiroof.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cheby_multiroof.h" beforeDir="false" afterPath="$PROJECT_DIR$/cheby_multiroof.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/params_common.h" beforeDir="false" afterPath="$PROJECT_DIR$/params_common.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/params_multiroof.cc" beforeDir="false" afterPath="$PROJECT_DIR$/params_multiroof.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/params_multiroof.h" beforeDir="false" afterPath="$PROJECT_DIR$/params_multiroof.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_multiroof_test.cc" beforeDir="false" afterPath="$PROJECT_DIR$/run_multiroof_test.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_simulation_multiroof.cc" beforeDir="false" afterPath="$PROJECT_DIR$/run_simulation_multiroof.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulate_multiroof.cc" beforeDir="false" afterPath="$PROJECT_DIR$/simulate_multiroof.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simulate_multiroof.h" beforeDir="false" afterPath="$PROJECT_DIR$/simulate_multiroof.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/experiments_visualize_2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/experiments_visualize_2.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,8 +95,18 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.run_multiroof_test load=6423 pv=7989 6423">
+  <component name="RunManager" selected="CMake Application.run_multiroof_test load=114 pv=7989 6423">
+    <configuration name="main_test" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Robust_Sizing" TARGET_NAME="main_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Robust_Sizing" RUN_TARGET_NAME="main_test">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="run_multiroof_cheby_exp" type="CMakeRunConfiguration" factoryName="Application" folderName="multiroof_sim" singleton="false" PROGRAM_PARAMS="2 1 0.19 0.95 365 500 50 example_inputs/pecan/normed/load_3482.txt 2000 500 100 example_inputs/pecan/normed/PV_7989.txt 2000 500 100 example_inputs/pecan/normed/PV_6423.txt" REDIRECT_INPUT="false" WORKING_DIR="file://$ProjectFileDir$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Robust_Sizing" TARGET_NAME="run_multiroof_cheby_experiments" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Robust_Sizing" RUN_TARGET_NAME="run_multiroof_cheby_experiments">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="run_multiroof_test load=114 pv=7989 6423" type="CMakeRunConfiguration" factoryName="Application" folderName="multiroof_sim" singleton="false" PROGRAM_PARAMS="&quot;load=114_pv=7989 6423&quot; 2 1 0.1 0.05 365 500 50 example_inputs/pecan/normed/load_114.txt 2000 500 50 example_inputs/pecan/normed/PV_7989.txt 2000 500 50 example_inputs/pecan/normed/PV_6423.txt" REDIRECT_INPUT="false" WORKING_DIR="file://$ProjectFileDir$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Robust_Sizing" TARGET_NAME="run_multiroof_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Robust_Sizing" RUN_TARGET_NAME="run_multiroof_test">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -128,7 +116,7 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="run_multiroof_test load=3482 pv=7989 6423" type="CMakeRunConfiguration" factoryName="Application" folderName="multiroof_sim" singleton="false" PROGRAM_PARAMS="&quot;load=3482_pv=7989 6423&quot; 2 1 0.9 0.85 365 500 50 example_inputs/pecan/normed/load_3482.txt 2000 500 50 example_inputs/pecan/normed/PV_7989.txt 2000 500 50 example_inputs/pecan/normed/PV_6423.txt" REDIRECT_INPUT="false" WORKING_DIR="file://$ProjectFileDir$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Robust_Sizing" TARGET_NAME="run_multiroof_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Robust_Sizing" RUN_TARGET_NAME="run_multiroof_test">
+    <configuration name="run_multiroof_test load=3482 pv=7989 6423" type="CMakeRunConfiguration" factoryName="Application" folderName="multiroof_sim" singleton="false" PROGRAM_PARAMS="&quot;load=3482_pv=7989 6423&quot; 2 1 0.1 0.05 365 500 50 example_inputs/pecan/normed/load_3482.txt 2000 500 50 example_inputs/pecan/normed/PV_7989.txt 2000 500 50 example_inputs/pecan/normed/PV_6423.txt" REDIRECT_INPUT="false" WORKING_DIR="file://$ProjectFileDir$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Robust_Sizing" TARGET_NAME="run_multiroof_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Robust_Sizing" RUN_TARGET_NAME="run_multiroof_test">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -155,6 +143,7 @@
     </configuration>
     <list>
       <item itemvalue="CMake Application.run_multiroof_test load=3482 pv=7989 6423" />
+      <item itemvalue="CMake Application.run_multiroof_test load=114 pv=7989 6423" />
       <item itemvalue="CMake Application.run_multiroof_test load=6423 pv=7989 6423" />
       <item itemvalue="CMake Application.run_multiroof_test load=3482 pv=7989 6423 3482" />
       <item itemvalue="CMake Application.run_multiroof_cheby_exp" />
@@ -165,6 +154,7 @@
       <item itemvalue="CMake Application.sim_lolp" />
       <item itemvalue="CMake Application.snc_lolp" />
       <item itemvalue="CMake Application.snc_eue" />
+      <item itemvalue="CMake Application.main_test" />
     </list>
   </component>
   <component name="SvnConfiguration">
@@ -200,6 +190,9 @@
       <workItem from="1607704585336" duration="92154000" />
       <workItem from="1609551891213" duration="82320000" />
       <workItem from="1611120324651" duration="602000" />
+      <workItem from="1611132202452" duration="635000" />
+      <workItem from="1611193670679" duration="5425000" />
+      <workItem from="1611209294565" duration="4248000" />
     </task>
     <servers />
   </component>
@@ -219,17 +212,20 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="496" y="206" key="#New_File_Extensions" timestamp="1611252860636">
+      <screen x="0" y="25" width="1792" height="1038" />
+    </state>
+    <state x="496" y="206" key="#New_File_Extensions/0.25.1792.1038@0.25.1792.1038" timestamp="1611252860636" />
     <state x="762" y="397" key="#Notifications" timestamp="1605588802708">
       <screen x="0" y="23" width="1920" height="1006" />
     </state>
     <state x="762" y="397" key="#Notifications/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605588802708" />
-    <state x="697" y="379" width="1164" height="523" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1611033760456">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state x="417" y="74" width="1164" height="932" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1611194408238">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
-    <state x="376" y="312" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1792.1048@0.23.1792.1048" timestamp="1601368009766" />
     <state x="264" y="180" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605027466196" />
     <state x="-1416" y="640" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1920.1008/-1792.337.1792.1097@-1792.337.1792.1097" timestamp="1603172599554" />
-    <state x="417" y="483" width="1164" height="523" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1792.1038@0.25.1792.1038" timestamp="1610876493928" />
+    <state x="417" y="74" width="1164" height="932" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1792.1038@0.25.1792.1038" timestamp="1611194408238" />
     <state x="676" y="202" width="1193" height="682" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049179434" />
     <state x="697" y="379" width="1071" height="611" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1611033760456" />
     <state x="646" y="232" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1608625596361">
@@ -241,99 +237,85 @@
     </state>
     <state x="722" y="275" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1608627761595" />
     <state x="866" y="329" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1610306438770" />
-    <state x="841" y="609" width="474" height="580" key="#xdebugger.evaluate" timestamp="1610947325830">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state x="654" y="406" width="474" height="614" key="#xdebugger.evaluate" timestamp="1611194081032">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state x="1579" y="330" key="#xdebugger.evaluate/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609262952253" />
-    <state x="1114" y="283" key="#xdebugger.evaluate/0.23.1792.1048@0.23.1792.1048" timestamp="1601369966007" />
     <state x="-968" y="607" width="617" height="506" key="#xdebugger.evaluate/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633512027" />
-    <state x="1217" y="243" key="#xdebugger.evaluate/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1601962227555" />
+    <state x="654" y="406" width="474" height="614" key="#xdebugger.evaluate/0.25.1792.1038@0.25.1792.1038" timestamp="1611194081032" />
     <state x="883" y="271" width="555" height="580" key="#xdebugger.evaluate/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1608628972683" />
     <state x="841" y="609" width="474" height="580" key="#xdebugger.evaluate/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1610947325830" />
     <state width="1106" height="537" key="DebuggerActiveHint" timestamp="1610946845762">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="921" height="445" key="DebuggerActiveHint/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1601962174211" />
     <state width="921" height="441" key="DebuggerActiveHint/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1608631923687" />
     <state width="1106" height="537" key="DebuggerActiveHint/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1610946845762" />
-    <state width="973" height="1088" key="GridCell.Tab.0.bottom" timestamp="1611032767976">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state width="859" height="912" key="GridCell.Tab.0.bottom" timestamp="1611253009538">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state width="1970" height="538" key="GridCell.Tab.0.bottom/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287205" />
-    <state width="1469" height="235" key="GridCell.Tab.0.bottom/0.23.1792.1048@0.23.1792.1048" timestamp="1601373333127" />
     <state width="1421" height="299" key="GridCell.Tab.0.bottom/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502980" />
-    <state width="1619" height="328" key="GridCell.Tab.0.bottom/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1602194613628" />
     <state width="1517" height="221" key="GridCell.Tab.0.bottom/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989544482" />
-    <state width="753" height="912" key="GridCell.Tab.0.bottom/0.25.1792.1038@0.25.1792.1038" timestamp="1610994444361" />
+    <state width="859" height="912" key="GridCell.Tab.0.bottom/0.25.1792.1038@0.25.1792.1038" timestamp="1611253009538" />
     <state width="1188" height="181" key="GridCell.Tab.0.bottom/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609131828209" />
     <state width="973" height="1088" key="GridCell.Tab.0.bottom/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1611032767976" />
-    <state width="973" height="1088" key="GridCell.Tab.0.center" timestamp="1611032767975">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state width="859" height="912" key="GridCell.Tab.0.center" timestamp="1611253009537">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state width="1970" height="538" key="GridCell.Tab.0.center/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287204" />
-    <state width="1469" height="235" key="GridCell.Tab.0.center/0.23.1792.1048@0.23.1792.1048" timestamp="1601373333127" />
     <state width="1421" height="299" key="GridCell.Tab.0.center/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502978" />
-    <state width="1619" height="328" key="GridCell.Tab.0.center/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1602194613627" />
     <state width="1517" height="221" key="GridCell.Tab.0.center/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989544480" />
-    <state width="753" height="912" key="GridCell.Tab.0.center/0.25.1792.1038@0.25.1792.1038" timestamp="1610994444360" />
+    <state width="859" height="912" key="GridCell.Tab.0.center/0.25.1792.1038@0.25.1792.1038" timestamp="1611253009537" />
     <state width="1188" height="181" key="GridCell.Tab.0.center/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609131828208" />
     <state width="973" height="1088" key="GridCell.Tab.0.center/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1611032767975" />
-    <state width="973" height="1088" key="GridCell.Tab.0.left" timestamp="1611032767975">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state width="859" height="912" key="GridCell.Tab.0.left" timestamp="1611253009537">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state width="1970" height="538" key="GridCell.Tab.0.left/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287203" />
-    <state width="1469" height="235" key="GridCell.Tab.0.left/0.23.1792.1048@0.23.1792.1048" timestamp="1601373333126" />
     <state width="1421" height="299" key="GridCell.Tab.0.left/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502977" />
-    <state width="1619" height="328" key="GridCell.Tab.0.left/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1602194613627" />
     <state width="1517" height="221" key="GridCell.Tab.0.left/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989544479" />
-    <state width="753" height="912" key="GridCell.Tab.0.left/0.25.1792.1038@0.25.1792.1038" timestamp="1610994444359" />
+    <state width="859" height="912" key="GridCell.Tab.0.left/0.25.1792.1038@0.25.1792.1038" timestamp="1611253009537" />
     <state width="1188" height="181" key="GridCell.Tab.0.left/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609131828207" />
     <state width="973" height="1088" key="GridCell.Tab.0.left/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1611032767975" />
-    <state width="973" height="1088" key="GridCell.Tab.0.right" timestamp="1611032767975">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state width="859" height="912" key="GridCell.Tab.0.right" timestamp="1611253009537">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state width="1970" height="538" key="GridCell.Tab.0.right/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287205" />
-    <state width="1469" height="235" key="GridCell.Tab.0.right/0.23.1792.1048@0.23.1792.1048" timestamp="1601373333127" />
     <state width="1421" height="299" key="GridCell.Tab.0.right/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502979" />
-    <state width="1619" height="328" key="GridCell.Tab.0.right/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1602194613627" />
     <state width="1517" height="221" key="GridCell.Tab.0.right/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989544481" />
-    <state width="753" height="912" key="GridCell.Tab.0.right/0.25.1792.1038@0.25.1792.1038" timestamp="1610994444360" />
+    <state width="859" height="912" key="GridCell.Tab.0.right/0.25.1792.1038@0.25.1792.1038" timestamp="1611253009537" />
     <state width="1188" height="181" key="GridCell.Tab.0.right/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609131828208" />
     <state width="973" height="1088" key="GridCell.Tab.0.right/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1611032767975" />
-    <state width="662" height="1088" key="GridCell.Tab.1.bottom" timestamp="1610947588669">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state width="487" height="912" key="GridCell.Tab.1.bottom" timestamp="1611209290711">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state width="1970" height="538" key="GridCell.Tab.1.bottom/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287206" />
-    <state width="1469" height="416" key="GridCell.Tab.1.bottom/0.23.1792.1048@0.23.1792.1048" timestamp="1601372666061" />
     <state width="1421" height="299" key="GridCell.Tab.1.bottom/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502982" />
-    <state width="1619" height="328" key="GridCell.Tab.1.bottom/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1602194613628" />
+    <state width="487" height="912" key="GridCell.Tab.1.bottom/0.25.1792.1038@0.25.1792.1038" timestamp="1611209290711" />
     <state width="1312" height="210" key="GridCell.Tab.1.bottom/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049415876" />
     <state width="662" height="1088" key="GridCell.Tab.1.bottom/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1610947588669" />
-    <state width="662" height="1088" key="GridCell.Tab.1.center" timestamp="1610947588668">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state width="487" height="912" key="GridCell.Tab.1.center" timestamp="1611209290710">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state width="1970" height="538" key="GridCell.Tab.1.center/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287206" />
-    <state width="1469" height="416" key="GridCell.Tab.1.center/0.23.1792.1048@0.23.1792.1048" timestamp="1601372666060" />
     <state width="1421" height="299" key="GridCell.Tab.1.center/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502981" />
-    <state width="1619" height="328" key="GridCell.Tab.1.center/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1602194613628" />
+    <state width="487" height="912" key="GridCell.Tab.1.center/0.25.1792.1038@0.25.1792.1038" timestamp="1611209290710" />
     <state width="1312" height="210" key="GridCell.Tab.1.center/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049415875" />
     <state width="662" height="1088" key="GridCell.Tab.1.center/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1610947588668" />
-    <state width="662" height="1088" key="GridCell.Tab.1.left" timestamp="1610947588668">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state width="487" height="912" key="GridCell.Tab.1.left" timestamp="1611209290710">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state width="1970" height="538" key="GridCell.Tab.1.left/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287205" />
-    <state width="1469" height="416" key="GridCell.Tab.1.left/0.23.1792.1048@0.23.1792.1048" timestamp="1601372666060" />
     <state width="1421" height="299" key="GridCell.Tab.1.left/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502980" />
-    <state width="1619" height="328" key="GridCell.Tab.1.left/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1602194613628" />
+    <state width="487" height="912" key="GridCell.Tab.1.left/0.25.1792.1038@0.25.1792.1038" timestamp="1611209290710" />
     <state width="1312" height="210" key="GridCell.Tab.1.left/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049415875" />
     <state width="662" height="1088" key="GridCell.Tab.1.left/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1610947588668" />
-    <state width="662" height="1088" key="GridCell.Tab.1.right" timestamp="1610947588669">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state width="487" height="912" key="GridCell.Tab.1.right" timestamp="1611209290711">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state width="1970" height="538" key="GridCell.Tab.1.right/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287206" />
-    <state width="1469" height="416" key="GridCell.Tab.1.right/0.23.1792.1048@0.23.1792.1048" timestamp="1601372666060" />
     <state width="1421" height="299" key="GridCell.Tab.1.right/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502982" />
-    <state width="1619" height="328" key="GridCell.Tab.1.right/0.23.1920.1008/-1792.337.1792.1097@0.23.1920.1008" timestamp="1602194613628" />
+    <state width="487" height="912" key="GridCell.Tab.1.right/0.25.1792.1038@0.25.1792.1038" timestamp="1611209290711" />
     <state width="1312" height="210" key="GridCell.Tab.1.right/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049415876" />
     <state width="662" height="1088" key="GridCell.Tab.1.right/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1610947588669" />
     <state x="421" y="262" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1604995158036">
@@ -344,11 +326,12 @@
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
     <state x="740" y="291" key="editAsTableFormatDialogDimension/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1611033540174" />
-    <state x="793" y="188" width="718" height="888" key="find.popup" timestamp="1611033936523">
-      <screen x="0" y="25" width="2304" height="1214" />
+    <state x="617" y="164" width="567" height="760" key="find.popup" timestamp="1611209273964">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
     <state x="661" y="158" width="598" height="735" key="find.popup/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1604994014982" />
     <state x="661" y="165" width="598" height="773" key="find.popup/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989466476" />
+    <state x="617" y="164" width="567" height="760" key="find.popup/0.25.1792.1038@0.25.1792.1038" timestamp="1611209273964" />
     <state x="661" y="159" width="598" height="730" key="find.popup/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1606801120723" />
     <state x="793" y="188" width="718" height="888" key="find.popup/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1611033936523" />
     <state width="600" height="428" key="javadoc.popup" timestamp="1604387675459">
@@ -459,9 +442,9 @@
           <option name="timeStamp" value="165" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/simulate_multiroof.cc</url>
-          <line>253</line>
-          <option name="timeStamp" value="186" />
+          <url>file://$PROJECT_DIR$/cheby_multiroof.cc</url>
+          <line>197</line>
+          <option name="timeStamp" value="187" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
