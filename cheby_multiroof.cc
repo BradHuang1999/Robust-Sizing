@@ -141,7 +141,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
 
     // Tabu search for the non-dominated, pareto-efficient boundary
     vector<SimulationMultiRoofResult> ret;
-    deque<pair<RowVectorXd, bool>> search_q;
+    deque<pair<SimulationMultiRoofResult, bool>> search_q;
     unordered_map<string, bool> seen;
 
     auto is_outside = [&](const RowVectorXd& lxi) -> pair<bool, bool> {
@@ -179,7 +179,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
             cout << "col " << i << " is viable at " << col_U << endl
                  << "- viable point is " << bxi << endl;
             bxi(i) = col_U;
-            search_q.emplace_back(move(bxi), true);
+            search_q.emplace_back(convert_to_result(bxi, is_zeros), true);
         } else {
             cout << "col " << i << " not viable" << endl;
         }
@@ -193,7 +193,8 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         const auto& curr_pair = search_q.front();
         search_q.pop_front();
 
-        RowVectorXd curr_xi = curr_pair.first;
+        SimulationMultiRoofResult curr_result = curr_pair.first;
+        RowVectorXd curr_xi = convert_to_rowvec(curr_result, is_zeros);
         bool curr_outside = curr_pair.second;
 
         bool all_lower_neighbor_inside = true;
@@ -201,7 +202,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         bool all_higher_neighbor_inside = true;
         bool all_higher_neighbor_outside = true;
 
-        vector<pair<RowVectorXd, bool>> neighbors;
+        vector<pair<SimulationMultiRoofResult, bool>> neighbors;
 
         // test for all its neighbors
         for (size_t i = 0; i <= non_zero_cols; ++i) {
@@ -217,7 +218,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
                 }
                 if (!lower_outside.second) {
 //                    cout << "(^pushed)" << endl;
-                    neighbors.emplace_back(move(lower_xi), lower_outside.first);
+                    neighbors.emplace_back(convert_to_result(lower_xi, is_zeros), lower_outside.first);
                 }
             } else {
                 all_lower_neighbor_inside = false;
@@ -234,7 +235,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
             }
             if (!higher_outside.second) {
 //                cout << "(^pushed)" << endl;
-                neighbors.emplace_back(move(higher_xi), higher_outside.first);
+                neighbors.emplace_back(convert_to_result(higher_xi, is_zeros), higher_outside.first);
             }
         }
 
@@ -245,7 +246,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         if (!(curr_outside && all_lower_neighbor_outside && all_higher_neighbor_outside) &&
             !(!curr_outside && all_lower_neighbor_inside && all_higher_neighbor_inside)) {
             for (auto& n: neighbors) {
-                search_q.push_back(move(n));
+                search_q.push_back(n);
             }
         }
     }
