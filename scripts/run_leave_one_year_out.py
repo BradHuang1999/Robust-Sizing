@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.7
 
 from glob import glob
 import os
@@ -26,13 +26,13 @@ if __name__ == '__main__':
     num_processes = int(num_processes)
 
     # get load/pv paths
-    os.chdir('/Users/braddo/Projects/solar_pv_research/Robust_Sizing')
+    os.chdir('/home/gqhuang/solar/Robust_Sizing')
     load_paths = sorted(glob('example_inputs/pecan/normed/load_[0-9]*'))[load_paths_start:load_paths_end]
     pv_paths = ['example_inputs/pecan/normed/PV_7989.txt',
                 'example_inputs/pecan/normed/PV_6423.txt']
 
     # fixed params
-    param_binary = 'cmake-build-debug/run_multiroof_test'
+    param_binary = 'bin/multiroof_test'
     param_n_solars = len(pv_paths)
     param_metric = 1 # 1=EUE, 0=LOLP
     param_days_in_chunk = 365
