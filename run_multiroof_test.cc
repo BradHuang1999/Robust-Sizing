@@ -282,14 +282,14 @@ void full_search_with_cross_validation(const string& foldername) {
             double sum_validation_loss = 0;
             vector<double> load_validation(T_yr);
             for (size_t yr = 0; yr < tot_yrs; ++yr) {
-                size_t load_validation_begin = validation_yr * T_yr;
-                size_t load_validation_end = (validation_yr + 1) * T_yr;
+                size_t load_validation_begin = yr * T_yr;
+                size_t load_validation_end = (yr + 1) * T_yr;
                 copy(load.begin() + load_validation_begin,
                      load.begin() + load_validation_end,
                      load_validation.begin());
                 double loss = sim(load_validation, solar_validation,
                                   0, T_yr, train_result.B, train_result.PVs);
-                cout << "yr " << yr << " load validation loss = " << loss;
+                cout << "yr " << yr << " load validation loss = " << loss << endl;
                 sum_validation_loss += loss;
             }
             validation_loss = sum_validation_loss / tot_yrs;
