@@ -19,14 +19,16 @@ double static a1_intercept = 0.0*num_cells;
 double static a2_intercept = kWh_in_one_cell*num_cells;
 double static eta_d = 1/0.9; // taking reciprocal so that we don't divide by eta_d when updating the battery energy content
 double static eta_c = 0.9942;
-double static alpha_d = a2_intercept*1.0; // the 1 indicates the maximum discharging C-rate
-double static alpha_c = a2_intercept*1.0; // the 1 indicates the maximum charging C-rate
+double static alpha_d = a2_intercept*0.5; // the 1 indicates the maximum discharging C-rate
+double static alpha_c = a2_intercept*0.5; // the 1 indicates the maximum charging C-rate
 
 double static default_adagrad_step_size = 1;
 double static cost_threshold = 50;
-size_t static mean_window_size = 200;
-size_t static adagrad_max_it = 20000;
-size_t static adagrad_stepsize = 3;
+size_t static adagrad_min_it = 50;
+size_t static adagrad_max_it = 2000;
+double static adagrad_stepsize = 100;
+double static decay_rate = 0.9;
+size_t static consec_over_threshold = 5;
 
 extern size_t total_sim_called;
 
@@ -34,10 +36,6 @@ double sim(
         const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
         size_t start_index, size_t end_index, double cells, const valarray<double> &pvs,
         double b_0 = 0);
-
-vector<SimulationMultiRoofResult> simulate(
-        const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
-        size_t start_index, size_t end_index, double b_0 = 0);
 
 SimulationMultiRoofResult binary_search_result(
         const vector<double> &load_trace, const vector<vector<double>> &solar_traces,

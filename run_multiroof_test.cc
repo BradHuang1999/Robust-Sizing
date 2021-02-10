@@ -37,38 +37,96 @@ std::ostream& operator<<( std::ostream& os, const std::valarray<T>& v ) {
     return os;
 }
 
-void adagrad_search(size_t start_index, valarray<double> init_pv, double step_size) {
-    valarray<bool> is_zeros = pv_maxs == 0;
-    vector<SimulationMultiRoofResult> adagrad_results = simulate_deterministic_adagrad(
-            load, solar, start_index, start_index + chunk_size, init_pv, is_zeros);
-
+void adagrad_search(size_t start_index) {
     stringstream filename_ss;
-    filename_ss << "results/adagrad_search/" << curr_time("%m_%d_%H_%M")
+    filename_ss << "results/adagrad_search/" << output_folder_path << "/";
+    filesystem::create_directory(filename_ss.str());
+    filename_ss << curr_time("%m_%d_%H_%M")
                 << "_start=" << start_index
-                << "_stepsize=" << step_size
-                << "_initpv=";
-    for (double p: init_pv) {
-        filename_ss << ((p > 0) ? 1 : 0);
-    }
-    filename_ss << ".csv";
+                << "_daysinchunk=" << days_in_chunk
+                << "_conf=" << confidence
+                << "_epsilon=" << epsilon
+                << "_num_steps=" << num_steps
+                << "_adagrad_stepsize=" << adagrad_stepsize
+                << ".csv";
 
     ofstream os(filename_ss.str());
-    os << "battery,pv1,pv2,cost,chunk_start" << endl;
-    for (SimulationMultiRoofResult& r: adagrad_results) {
-        os << r << endl;
+    if (os.fail()) {
+        throw runtime_error("os failed");
+    }
+    cout << "Starting adagrad search, file stored at " << filename_ss.str() << endl;
+    os << "type,battery,";
+    for (size_t i = 0; i < n_solars; ++i) {
+        os << "pv" << i << ",";
+    }
+    os << "cost" << endl;
+
+    // combinatorial explosion
+    for (size_t type = 1; type < (1u << n_solars); ++type) {
+        cout << "\n--------------------- start of type " << type << " ---------------------" << endl;
+        cout << endl << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
+
+        valarray<double> pv_start = pv_maxs;
+        valarray<bool> is_zeros = (pv_maxs == (double) 0);
+
+        bool skip = false;
+        for (size_t i = 0; i < n_solars; ++i) {
+            if ((type & (1u << i)) == 0) {
+                if (is_zeros[i]) {
+                    skip = true;
+                    break;
+                }
+
+                pv_start[i] = 0;
+                is_zeros[i] = true;
+            }
+        }
+        if (skip) {
+            continue;
+        }
+
+        cout << "training len: " << load.size() << endl;
+        cout << "pv_start: " << pv_start << endl;
+        cout << "is_zeros: " << is_zeros << endl;
+
+        update_chebyshev_params(is_zeros);
+        update_number_of_chunks();
+
+        vector<SimulationMultiRoofResult> adagrad_results = simulate_deterministic_adagrad(
+                load, solar, start_index, start_index + chunk_size, pv_start, is_zeros);
+
+        for (SimulationMultiRoofResult& r: adagrad_results) {
+            os << type << "," << r << endl;
+        }
     }
 }
 
 void grid_search(size_t start_index) {
+    valarray<bool> is_zeros(false, n_solars);
+    update_chebyshev_params(is_zeros);
+    update_number_of_chunks();
+
     vector<SimulationMultiRoofResult> results = vector<SimulationMultiRoofResult>();
 
     stringstream filename_ss;
-    filename_ss << "results/grid_search/" << curr_time("%m_%d_%H_%M")
+    filename_ss << "results/grid_search/" << output_folder_path << "/";
+    filesystem::create_directory(filename_ss.str());
+    filename_ss << curr_time("%m_%d_%H_%M")
                 << "_start=" << start_index
+                << "_daysinchunk=" << days_in_chunk
+                << "_conf=" << confidence
+                << "_epsilon=" << epsilon
+                << "_num_steps=" << num_steps
                 << ".csv";
 
-    for (size_t pv1_idx = 0; pv1_idx < 350; ++pv1_idx) {
-        double pv1 = pv_mins[0] + pv1_idx * pv_steps[0];
+    ofstream os(filename_ss.str());
+    if (os.fail()) {
+        throw runtime_error("os failed");
+    }
+    os << "battery,pv1,pv2,cost" << endl;
+    cout << "Starting grid search, file stored at " << filename_ss.str() << endl;
+
+    for (double pv1 = pv_mins[0]; pv1 <= pv_maxs[0]; pv1 += pv_steps[0]) {
         valarray<double> pvs(2);
         pvs[0] = pv1;
         for (double pv2 = pv_mins[1]; pv2 <= pv_maxs[1]; pv2 += pv_steps[1]) {
@@ -76,15 +134,9 @@ void grid_search(size_t start_index) {
             SimulationMultiRoofResult result = binary_search_result(
                     load, solar, start_index, start_index + chunk_size, pvs);
             if (result.feasible) {
-                results.push_back(result);
+                os << result << endl;
             }
         }
-    }
-
-    ofstream os(filename_ss.str());
-    os << "battery,pv1,pv2,cost,chunk_start" << endl;
-    for (SimulationMultiRoofResult& r: results) {
-        os << r << endl;
     }
 }
 
@@ -108,13 +160,8 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
                        << "_conf=" << confidence
                        << "_epsilon=" << epsilon
                        << ".csv";
-    ofstream adagrad_results_os(adagrad_results_ss.str());
-    adagrad_results_os << "type,battery,";
-    for (size_t i = 0; i < n_solars; ++i) {
-        adagrad_results_os << "pv" << i << ",";
-    }
-    adagrad_results_os << "cost" << endl;
 
+    filesystem::create_directory(foldername);
     stringstream cheby_results_ss;
     cheby_results_ss << foldername << "cheby/";
     filesystem::create_directory(cheby_results_ss.str());
@@ -123,7 +170,25 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
                      << "_conf=" << confidence
                      << "_epsilon=" << epsilon
                      << ".csv";
+
+    filesystem::create_directory(foldername);
+    cout << "Starting grid search, file stored at " << adagrad_results_ss.str() << endl;
+    cout << "-- cheby file stored at " << cheby_results_ss.str() << endl;
+
+    ofstream adagrad_results_os(adagrad_results_ss.str());
+    if (adagrad_results_os.fail()) {
+        throw runtime_error("adagrad_results_os failed");
+    }
+    adagrad_results_os << "type,battery,";
+    for (size_t i = 0; i < n_solars; ++i) {
+        adagrad_results_os << "pv" << i << ",";
+    }
+    adagrad_results_os << "cost" << endl;
+
     ofstream cheby_results_os(cheby_results_ss.str());
+    if (cheby_results_os.fail()) {
+        throw runtime_error("adagrad_results_os failed");
+    }
     cheby_results_os << "type,battery,";
     for (size_t i = 0; i < n_solars; ++i) {
         cheby_results_os << "pv" << i << ",";
@@ -402,6 +467,9 @@ void chernoff_tabu_search(double target_p, const string& foldername="") {
     vector<SimulationMultiRoofResult> ret = tabu_cheroff(load, solar, target_p);
 
     ofstream os(filename_ss.str());
+    if (os.fail()) {
+        throw runtime_error("os failed");
+    }
     os << "battery,pv1,pv2,cost" << endl;
 
     for (const SimulationMultiRoofResult& s: ret) {
@@ -527,16 +595,18 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-//    grid_search(32240);
-//    adagrad_search(15000, pv_maxs, 3);
-//    adagrad_search(32240, {pv_maxs[0], 0}, 3);
-//
+//    grid_search(0);
+//    adagrad_search(0);
+
 //    chernoff_grid_map(1000);
 //    chernoff_search(0.9);
 //    chernoff_tabu_search(p, output_folder_path);
 
-//    full_search(output_folder_path);
-    full_search_with_cross_validation(output_folder_path);
+    stringstream full_search_foldername_ss;
+    full_search_foldername_ss << "results/full_search/" << output_folder_path << "/";
+    full_search(full_search_foldername_ss.str(), curr_time("%m_%d_%H_%M_%S"));
+
+//    full_search_with_cross_validation(output_folder_path);
 
     cout << "\nOperation ended at " << curr_time("%m/%d %H:%M:%S") << endl;
 

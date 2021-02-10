@@ -20,7 +20,8 @@ add_executable(run_multiroof_cheby_experiments
         params_multiroof.h
         run_multiroof_cheby_experiments.cc
         simulate_multiroof.cc
-        simulate_system.h)
+        simulate_system.h
+        )
 target_link_libraries (run_multiroof_cheby_experiments Eigen3::Eigen)
 
 add_executable(run_multiroof_test
@@ -32,7 +33,8 @@ add_executable(run_multiroof_test
         params_multiroof.h
         run_multiroof_test.cc
         simulate_multiroof.cc
-        simulate_system.h)
+        simulate_system.h
+        )
 target_link_libraries (run_multiroof_test Eigen3::Eigen)
 
 add_executable(sim_eue
@@ -44,7 +46,8 @@ add_executable(sim_eue
         params.h
         run_simulation.cc
         simulate_system.cc
-        simulate_system.h)
+        simulate_system.h
+        )
 
 add_executable(sim_lolp
         cheby.cc
@@ -55,7 +58,8 @@ add_executable(sim_lolp
         params.h
         run_simulation.cc
         simulate_system.cc
-        simulate_system.h)
+        simulate_system.h
+        )
 
 add_executable(sim_eue_multiroof
         cheby_multiroof.cc
@@ -66,7 +70,8 @@ add_executable(sim_eue_multiroof
         params_multiroof.h
         run_simulation_multiroof.cc
         simulate_multiroof.cc
-        simulate_system.h)
+        simulate_system.h
+        )
 target_link_libraries (sim_eue_multiroof Eigen3::Eigen)
 
 add_executable(sim_lolp_multiroof
@@ -78,7 +83,8 @@ add_executable(sim_lolp_multiroof
         params_multiroof.h
         run_simulation_multiroof.cc
         simulate_multiroof.cc
-        simulate_system.h)
+        simulate_system.h
+        )
 target_link_libraries (sim_lolp_multiroof Eigen3::Eigen)
 
 add_executable(snc_eue
@@ -90,7 +96,8 @@ add_executable(snc_eue
         params.h
         run_snc_eue.cc
         snc_eue_pertrace.cc
-        simulate_system.h)
+        simulate_system.h
+        )
 
 add_executable(snc_lolp
         cheby.cc
@@ -101,4 +108,5 @@ add_executable(snc_lolp
         params.h
         run_snc_lolp.cc
         snc_lolp_pertrace.cc
-        simulate_system.h)
+        simulate_system.h
+        )

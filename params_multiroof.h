@@ -8,6 +8,10 @@
 #include "params_common.h"
 #include <utility>
 #include <valarray>
+#include <Eigen/Dense>
+
+using namespace std;
+using namespace Eigen;
 
 const size_t static runs_per_chunk = 5;
 
@@ -26,7 +30,6 @@ extern valarray<double> pv_maxs;
 extern valarray<double> pv_steps; // search in steps of x kW
 
 struct SimulationMultiRoofResult {
-
     bool feasible;
     double B;
     valarray<double> PVs;
@@ -50,9 +53,7 @@ struct SimulationMultiRoofResult {
     }
 
 public:
-
     string cells_pv_serialize() const;
-
     friend ostream& operator<< (ostream& os, const SimulationMultiRoofResult& result);
 };
 

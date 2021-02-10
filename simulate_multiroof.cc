@@ -10,6 +10,8 @@
 
 #include "simulate_multiroof.h"
 
+#define USE_ADADELTA
+
 using namespace std;
 
 size_t total_sim_called = 0;
@@ -29,9 +31,7 @@ void update_parameters(double n) {
 // decrease the applied (charging) power by increments of (1/30) until the power is
 // low enough to avoid violating the upper energy limit constraint.
 double calc_max_charging(double power, double b_prev) {
-
     double step = power/30.0;
-
     for (double c = power; c >= 0; c -= step) {
         double upper_lim = a2_slope*(c/nominal_voltage_c) + a2_intercept;
         double b = b_prev + c*eta_c*T_u;
@@ -46,9 +46,7 @@ double calc_max_charging(double power, double b_prev) {
 // decrease the applied (discharging) power by increments of (1/30) until the power is
 // low enough to avoid violating the lower energy limit constraint.
 double calc_max_discharging(double power, double b_prev) {
-
     double step = power/30.0;
-
     for (double d = power; d >= 0; d -= step) {
         double lower_lim = a1_slope*(d/nominal_voltage_d) + a1_intercept;
         double b = b_prev - d*eta_d*T_u;
@@ -64,10 +62,8 @@ double calc_max_discharging(double power, double b_prev) {
 // You could potentially speed up the computation by expanding these functions into sim_year
 // to avoid procedure calls in this inner loop.
 double sim(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
-           size_t start_index, size_t end_index, double cells, const valarray<double> &pvs, double b_0)
-{
+           size_t start_index, size_t end_index, double cells, const valarray<double> &pvs, double b_0) {
     ++total_sim_called;
-
     update_parameters(cells);
 
     // set the battery
@@ -80,8 +76,7 @@ double sim(const vector<double> &load_trace, const vector<vector<double>> &solar
 
     size_t trace_length_load = load_trace.size();
 
-    for (size_t t = start_index; t < end_index; t++)
-    {
+    for (size_t t = start_index; t < end_index; t++) {
         // wrap around to the start of the trace if we hit the end.
         const double total_load = load_trace[t % trace_length_load];
 
@@ -121,105 +116,34 @@ double sim(const vector<double> &load_trace, const vector<vector<double>> &solar
     }
 }
 
-// Run simulation for provides solar and load trace to find cheapest combination of
-// load and solar that can meet the epsilon target
-vector<SimulationMultiRoofResult> simulate(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
-                                           size_t start_index, size_t end_index, double b_0)
-{
-    vector<SimulationMultiRoofResult> pareto_set;
-
-    valarray<double> pv_values(pv_maxs);
-    vector<size_t> pv_nonzero_indexes;
-    for (size_t i = 0; i < n_solars; ++i) {
-        if (pv_values[i] > 0) {
-            pv_nonzero_indexes.push_back(i);
-        }
-    }
-
-    // first, find the lowest value of cells that will get us epsilon loss when the PV is maximized
-    // use binary search
-    double cells_U = cells_max;
-    double cells_L = cells_min;
-
-    while (cells_U - cells_L > cells_step)
-    {
-        double mid_cells = (cells_L + cells_U) / 2.0;
-        double loss = sim(load_trace, solar_traces, start_index, end_index, mid_cells, pv_values, b_0);
-
-        //cout << "sim result with " << a2_intercept << " kWh and " << pv_max << " pv: " << loss << endl;
-        if (loss > epsilon)
-        {
-            cells_L = mid_cells;
-        }
-        else
-        {
-            // (loss <= epsilon)
-            cells_U = mid_cells;
-        }
-    }
-
-    default_random_engine ran_gen;
-    uniform_int_distribution<size_t> rdm(0, pv_nonzero_indexes.size() - 1);
-
-    double b_value;
-    double b_init = cells_U;
-
-    while (!pv_nonzero_indexes.empty())
-    {
-        bool found = false;
-        for (b_value = b_init; b_value < cells_max && !found; b_value += cells_step)
-        {
-            double loss = sim(load_trace, solar_traces, start_index, end_index, b_value, pv_values, b_0);
-            if (loss < epsilon) {
-                found = true;
-                pareto_set.emplace_back(b_value, pv_values);
-                b_init = b_value;
-            }
-        }
-
-        if (b_value >= cells_max) {
-            return pareto_set;
-        } else {
-            size_t rindex_a_nonzero = rdm(ran_gen);
-            size_t reduce_index = pv_nonzero_indexes[rindex_a_nonzero];
-
-            pv_values[reduce_index] -= pv_steps[reduce_index];
-            if (pv_values[reduce_index] <= 0) {
-                // erase reduce_index, at rindex_a_nonzero, from pv_nonzero_indexes
-                pv_nonzero_indexes.erase(pv_nonzero_indexes.begin() + rindex_a_nonzero);
-                // replace rdm
-                rdm = uniform_int_distribution<size_t>(0, pv_nonzero_indexes.size() - 1);
-            }
-        }
-    }
-
-    return pareto_set;
-}
-
 SimulationMultiRoofResult
 binary_search_result(const vector<double> &load_trace, const vector<vector<double>> &solar_traces, size_t start_index,
-                     size_t end_index, const valarray<double> &pvs, double b_0, double cells_U, double cells_L)
-{
+                     size_t end_index, const valarray<double> &pvs, double b_0, double cells_U, double cells_L) {
     double loss_U = INFTY;
+    bool test_L = true;
 
     while (cells_U - cells_L > cells_step)
     {
-        double mid_cells = (cells_L + cells_U) / 2.0;
-        double loss = sim(load_trace, solar_traces, start_index, end_index, mid_cells, pvs, 0);
+        double cells_M = (cells_L + cells_U) / 2.0;
+        double loss = sim(load_trace, solar_traces, start_index, end_index, cells_M, pvs, 0);
 
-        if (loss > epsilon)
-        {
-            cells_L = mid_cells;
-        }
-        else
-        {
+        if (loss > epsilon) {
+            cells_L = cells_M;
+            test_L = false;
+        } else {
             // (loss <= epsilon)
             loss_U = loss;
-            cells_U = mid_cells;
+            cells_U = cells_M;
         }
     }
 
     if (loss_U <= epsilon) {
+        if (test_L) {
+            double loss = sim(load_trace, solar_traces, start_index, end_index, cells_L, pvs, 0);
+            if (loss <= epsilon) {
+                return SimulationMultiRoofResult(cells_L, pvs);
+            }
+        }
         return SimulationMultiRoofResult(cells_U, pvs);
     } else {
         return SimulationMultiRoofResult();
@@ -247,9 +171,17 @@ simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<ve
     }
 
     valarray<double> pv_values(init_pv);
+
+#ifdef USE_ADADELTA
+    fudge_factor = 1;
+    valarray<double> s(0.0, n_solars);
+    valarray<double> delta(0.0, n_solars);
+#else
     valarray<double> g_ti(0.0, n_solars);
-    deque<double> mean_window;
-    double window_sum = 0;
+#endif
+
+    size_t consec_over = 0;
+    double diminishing_mean = last_run_result.cost;
 
     for (size_t it_count = 0; it_count < adagrad_max_it; ++it_count) {
         ret.push_back(last_run_result);
@@ -275,8 +207,15 @@ simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<ve
             return ret;
         }
 
+#ifdef USE_ADADELTA
+        s = (decay_rate * s) + (1 - decay_rate) * grad * grad;
+        valarray<double> g = (sqrt(delta + fudge_factor) / sqrt(s + fudge_factor)) * grad;
+        pv_values -= g;
+        delta = (decay_rate * delta) + (1 - decay_rate) * g * g;
+#else
         g_ti += grad * grad;
         pv_values -= adagrad_stepsize * (grad / (fudge_factor + sqrt(g_ti)));
+#endif
 
         for (size_t t = 0; t < n_solars; ++t) {
             if (!is_zeros[t]) {
@@ -286,6 +225,8 @@ simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<ve
                     // comes to bite us when there any many panels and the absolute stepsize is too big
                     //   that all traces return exactly one
                     pv_values[t] = pv_steps[t];
+                } else if (pv_values[t] > pv_maxs[t]) {
+                    pv_values[t] = pv_maxs[t];
                 }
             }
         }
@@ -296,20 +237,21 @@ simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<ve
             return ret;
         }
 
-        // terminate adagrad if the difference between the mean window size and the current cost
-        //   is lower than cost_threshold
-        if (it_count >= mean_window_size) {
-            if (abs((window_sum / mean_window_size) - curr_run_result.cost) < cost_threshold) {
-                ret.push_back(curr_run_result);
-                return ret;
-            }
-            window_sum -= mean_window.front();
-            mean_window.pop_front();
-        }
-        window_sum += curr_run_result.cost;
-        mean_window.push_back(curr_run_result.cost);
+        last_run_result = move(curr_run_result);
 
-        last_run_result = curr_run_result;
+        // terminate if curr cost >= diminishing mean for a consecutive number of 5 times
+        if (it_count >= adagrad_min_it) {
+            if (last_run_result.cost >= diminishing_mean) {
+                ++consec_over;
+            } else {
+                consec_over = 0;
+            }
+            if (consec_over > consec_over_threshold) {
+                break;
+            }
+        }
+
+        diminishing_mean = (decay_rate * diminishing_mean) + ((1 - decay_rate) * last_run_result.cost);
     }
 
     ret.push_back(last_run_result);
@@ -396,9 +338,7 @@ tabu_cheroff(const vector <double> &load_trace, const vector<vector<double>> &so
         if (p_delta >= target_p) {
             viable = true;
             u = m - 1;
-        }
-        else
-        {
+        } else {
             l = m + 1;
         }
     }
@@ -533,4 +473,3 @@ tabu_cheroff(const vector <double> &load_trace, const vector<vector<double>> &so
 
     return boundary;
 }
-
