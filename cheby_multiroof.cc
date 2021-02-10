@@ -131,10 +131,13 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
     cout << "mu_eta=" << mu_eta << endl;
 
     MatrixXd sigma_diff = sigma - mu_eta.replicate(eta, 1);
-    MatrixXd sigma_eta = sigma_diff.transpose() * sigma_diff / (eta - 1);
-    MatrixXd sigma_eta_inv = sigma_eta.inverse();
 
+    MatrixXd sigma_eta = sigma_diff.transpose() * sigma_diff / (eta - 1);
     cout << "sigma_eta=" << endl << sigma_eta << endl << endl;
+
+
+
+    MatrixXd sigma_eta_inv = sigma_eta.inverse();
 
     RowVectorXd cheby_mins = convert_to_rowvec(SimulationMultiRoofResult(cells_min, pv_mins), is_zeros);
     RowVectorXd cheby_maxs = convert_to_rowvec(SimulationMultiRoofResult(cells_max, pv_maxs), is_zeros);

@@ -26,12 +26,14 @@ if __name__ == '__main__':
     num_processes = int(num_processes)
 
     # get load/pv paths
-    os.chdir('/home/gqhuang/solar/Robust_Sizing')
+    os.chdir('..')
     load_paths = sorted(glob('example_inputs/pecan/normed/load_[0-9]*'))[load_paths_start:load_paths_end]
     pv_paths = ['example_inputs/pecan/normed/PV_7989.txt',
                 'example_inputs/pecan/normed/PV_6423.txt']
 
     # fixed params
+    param_search_mode = 'v'
+    param_type_mode = 0
     param_binary = 'bin/multiroof_test'
     param_n_solars = len(pv_paths)
     param_metric = 1 # 1=EUE, 0=LOLP
@@ -52,7 +54,7 @@ if __name__ == '__main__':
     pv_command = " ".join(f'{param_pv_fixcost} {param_pv_varcost} {param_pv_max} {pv_path}' for pv_path in pv_paths)
 
     commands = [
-        f'{param_binary} "{load_pv_ids % load_id}" {param_n_solars} {param_metric} {epsilon} {conf} {param_days_in_chunk} {param_battery_varcost} {param_battery_max} {load_path} {pv_command}' \
+        f'{param_search_mode} {param_type_mode} {param_binary} "{load_pv_ids % load_id}" {param_n_solars} {param_metric} {epsilon} {conf} {param_days_in_chunk} {param_battery_varcost} {param_battery_max} {load_path} {pv_command}' \
         for (load_id, load_path), conf, epsilon in itertools.product(loads, confs, epsilons)
     ]
 

@@ -63,6 +63,10 @@ void adagrad_search(size_t start_index) {
 
     // combinatorial explosion
     for (size_t type = 1; type < (1u << n_solars); ++type) {
+        if (type_mode != 0 && type_mode != type) {
+            continue;
+        }
+
         cout << "\n--------------------- start of type " << type << " ---------------------" << endl;
         cout << endl << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
 
@@ -153,54 +157,60 @@ SimulationMultiRoofResult min_cost(const vector<SimulationMultiRoofResult> &resu
 }
 
 SimulationMultiRoofResult full_search(const string& foldername, const curr_time& ct) {
-    stringstream adagrad_results_ss;
-    adagrad_results_ss << foldername
-                       << ct
-                       << "_daysinchunk=" << days_in_chunk
-                       << "_conf=" << confidence
-                       << "_epsilon=" << epsilon
-                       << ".csv";
-
     filesystem::create_directory(foldername);
-    stringstream cheby_results_ss;
-    cheby_results_ss << foldername << "cheby/";
-    filesystem::create_directory(cheby_results_ss.str());
-    cheby_results_ss << ct
-                     << "_daysinchunk=" << days_in_chunk
-                     << "_conf=" << confidence
-                     << "_epsilon=" << epsilon
-                     << ".csv";
 
-    filesystem::create_directory(foldername);
-    cout << "Starting grid search, file stored at " << adagrad_results_ss.str() << endl;
-    cout << "-- cheby file stored at " << cheby_results_ss.str() << endl;
+    stringstream cheby_ss;
+    cheby_ss << foldername << "cheby/";
+    filesystem::create_directory(cheby_ss.str());
 
-    ofstream adagrad_results_os(adagrad_results_ss.str());
-    if (adagrad_results_os.fail()) {
-        throw runtime_error("adagrad_results_os failed");
-    }
-    adagrad_results_os << "type,battery,";
-    for (size_t i = 0; i < n_solars; ++i) {
-        adagrad_results_os << "pv" << i << ",";
-    }
-    adagrad_results_os << "cost" << endl;
-
-    ofstream cheby_results_os(cheby_results_ss.str());
-    if (cheby_results_os.fail()) {
-        throw runtime_error("adagrad_results_os failed");
-    }
-    cheby_results_os << "type,battery,";
-    for (size_t i = 0; i < n_solars; ++i) {
-        cheby_results_os << "pv" << i << ",";
-    }
-    cheby_results_os << "cost" << endl;
+    cout << "Starting full search, files stored at " << foldername << endl;
 
     vector<SimulationMultiRoofResult> min_chebys;
 
     // combinatorial explosion
     for (size_t type = 1; type < (1u << n_solars); ++type) {
+        if (type_mode != 0 && type_mode != type) {
+            continue;
+        }
+
         cout << "\n--------------------- start of type " << type << " ---------------------" << endl;
         cout << endl << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
+
+        stringstream adagrad_results_ss;
+        adagrad_results_ss << foldername
+                           << ct
+                           << "_type=" << type
+                           << "_daysinchunk=" << days_in_chunk
+                           << "_conf=" << confidence
+                           << "_epsilon=" << epsilon
+                           << ".csv";
+        ofstream adagrad_results_os(adagrad_results_ss.str());
+        if (adagrad_results_os.fail()) {
+            throw runtime_error("adagrad_results_os failed");
+        }
+        adagrad_results_os << "type,battery,";
+        for (size_t i = 0; i < n_solars; ++i) {
+            adagrad_results_os << "pv" << i << ",";
+        }
+        adagrad_results_os << "cost" << endl;
+
+        stringstream cheby_results_ss;
+        cheby_results_ss << cheby_ss.str()
+                         << ct
+                         << "_type=" << type
+                         << "_daysinchunk=" << days_in_chunk
+                         << "_conf=" << confidence
+                         << "_epsilon=" << epsilon
+                         << ".csv";
+        ofstream cheby_results_os(cheby_results_ss.str());
+        if (cheby_results_os.fail()) {
+            throw runtime_error("adagrad_results_os failed");
+        }
+        cheby_results_os << "type,battery,";
+        for (size_t i = 0; i < n_solars; ++i) {
+            cheby_results_os << "pv" << i << ",";
+        }
+        cheby_results_os << "cost" << endl;
 
         valarray<double> pv_start = pv_maxs;
         valarray<bool> is_zeros = (pv_maxs == (double)0);
@@ -235,6 +245,8 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
              << "number_of_chunks = " << number_of_chunks << endl
              << endl;
 
+        time_t t_before = time(nullptr);
+
         vector<SimulationMultiRoofResult> min_adagrads;
 
         for (size_t chunk_num = 0; chunk_num < number_of_chunks; chunk_num += 1) {
@@ -250,6 +262,7 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
         for (const SimulationMultiRoofResult& r: min_adagrads) {
             adagrad_results_os << type << "," << r << endl;
         }
+        adagrad_results_os.close();
 
         // get cheby bound
         vector<SimulationMultiRoofResult> cheby_results = get_chebyshev_bound(min_adagrads, is_zeros);
@@ -258,16 +271,33 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
         for (const SimulationMultiRoofResult& r: cheby_results) {
             cheby_results_os << type << "," << r << endl;
         }
+        cheby_results_os.close();
 
         SimulationMultiRoofResult min_cheby_result = min_cost(cheby_results);
         min_chebys.push_back(min_cheby_result);
 
         cout << "min_cheby_result: " << min_cheby_result << endl;
         cout << "\nOperation ended at " << curr_time("%m/%d %H:%M:%S") << endl;
-    }
 
-    adagrad_results_os.close();
-    cheby_results_os.close();
+        time_t t_after = time(nullptr);
+
+        stringstream type_summary_ss;
+        type_summary_ss << foldername << "type_summary" << n_solars << ".csv";
+        ofstream type_summary_os;
+        type_summary_os.open(type_summary_ss.str(), ios_base::app);
+        type_summary_os << ct << ","
+                        << output_folder_path << ","
+                        << type << ","
+                        << days_in_chunk << ","
+                        << confidence << ","
+                        << epsilon << ","
+                        << min_cheby_result.feasible << ","
+                        << min_cheby_result << ","
+                        << (t_after - t_before) << ","
+                        << total_sim_called
+                        << endl;
+        type_summary_os.close();
+    }
 
     SimulationMultiRoofResult ret_result = min_cost(min_chebys);
     cout << "\n--------------------- final result ---------------------" << endl;
@@ -608,18 +638,34 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-//    grid_search(0);
-//    adagrad_search(0);
+    stringstream foldername_ss;
 
-//    chernoff_grid_map(1000);
-//    chernoff_search(0.9);
-//    chernoff_tabu_search(p, output_folder_path);
-
-    stringstream full_search_foldername_ss;
-    full_search_foldername_ss << "results/full_search/" << output_folder_path << "/";
-    full_search(full_search_foldername_ss.str(), curr_time("%m_%d_%H_%M_%S"));
-
-//    full_search_with_cross_validation(output_folder_path);
+    switch (search_mode) {
+        case 'g':
+            grid_search(0);
+            break;
+        case 'a':
+            adagrad_search(0);
+            break;
+        case 'r':
+            chernoff_grid_map();
+            break;
+        case 'c':
+            chernoff_search(0.7);
+            break;
+        case 't':
+            chernoff_tabu_search(0.7, output_folder_path);
+            break;
+        case 'f':
+            foldername_ss << "results/full_search/" << output_folder_path << "/";
+            full_search(foldername_ss.str(), curr_time("%m_%d_%H_%M_%S"));
+            break;
+        case 'v':
+            full_search_with_cross_validation(output_folder_path);
+            break;
+        default:
+            throw runtime_error("search mode not found");
+    }
 
     cout << "\nOperation ended at " << curr_time("%m/%d %H:%M:%S") << endl;
 

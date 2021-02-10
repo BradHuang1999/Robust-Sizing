@@ -6,6 +6,8 @@
 
 using namespace std;
 
+char search_mode;
+size_t type_mode;
 string output_folder_path;
 
 size_t n_solars;
@@ -55,8 +57,28 @@ int process_input(int argc, char **argv) {
 
     int i = 0;
 
+    // search_mode
+    search_mode = argv[++i][0];
+
+#ifdef DEBUG
+    cout << "search_mode = " << search_mode << endl;
+#endif
+
+    // type_mode
+    string type_mode_string = argv[++i];
+    type_mode = stoi(type_mode_string);
+
+#ifdef DEBUG
+    cout << "type_mode_string = " << type_mode_string
+         << ", type_mode = " << type_mode << endl;
+#endif
+
     // output_folder_path
     output_folder_path = argv[++i];
+
+#ifdef DEBUG
+    cout << "output_folder_path = " << output_folder_path << endl;
+#endif
 
     // n_solars
     string n_solars_string = argv[++i];

@@ -15,6 +15,8 @@ using namespace Eigen;
 
 const size_t static runs_per_chunk = 5;
 
+extern char search_mode;
+extern size_t type_mode;
 extern string output_folder_path; // an optional path to output process file
 
 extern size_t n_solars;
