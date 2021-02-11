@@ -23,7 +23,7 @@ if __name__ == '__main__':
     epsilons = epsilons.split(',')
     num_processes = int(num_processes)
 
-    param_binary = 'cmake-build-debug/run_multiroof_test'
+    param_binary = 'bin/multiroof_test'
     n_solar = 5
     n_types = 1 << n_solar
     
