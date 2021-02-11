@@ -316,13 +316,13 @@ void full_search_with_cross_validation(const string& foldername) {
     }
     size_t tot_yrs = load.size() / T_yr;
 
-//    vector<double> load_bk((tot_yrs - 1) * T_yr);
-//    swap(load, load_bk);
+    vector<double> load_bk((tot_yrs - 1) * T_yr);
+    swap(load, load_bk);
 
     vector<vector<double>> solar_bk(n_solars, vector<double>((tot_yrs - 1) * T_yr));
     swap(solar, solar_bk);
 
-//    vector<double> load_validation(T_yr);
+    vector<double> load_validation(T_yr);
     vector<vector<double>> solar_validation(n_solars, vector<double>(T_yr));
 
     for (size_t validation_yr = 0; validation_yr < tot_yrs; ++validation_yr) {
@@ -331,18 +331,18 @@ void full_search_with_cross_validation(const string& foldername) {
         size_t validation_begin = validation_yr * T_yr;
         size_t validation_end = (validation_yr + 1) * T_yr;
 
-//        // copy from ..v_begin to load (training set)
-//        copy(load_bk.begin(),
-//             load_bk.begin() + validation_begin,
-//             load.begin());
-//        // copy from v_begin..v_end to load_validation
-//        copy(.begin() + validation_begin,
-//             load_bk.begin() + validation_end,load_bk
-//             load_validation.begin());
-//        // copy from v_end.. to load (training set)
-//        copy(load_bk.begin() + validation_end,
-//             load_bk.end(),
-//             load.begin() + validation_begin);
+        // copy from ..v_begin to load (training set)
+        copy(load_bk.begin(),
+             load_bk.begin() + validation_begin,
+             load.begin());
+        // copy from v_begin..v_end to load_validation
+        copy(load_bk.begin() + validation_begin,
+             load_bk.begin() + validation_end,
+             load_validation.begin());
+        // copy from v_end.. to load (training set)
+        copy(load_bk.begin() + validation_end,
+             load_bk.end(),
+             load.begin() + validation_begin);
 
         for (size_t s = 0; s < n_solars; ++s) {
             // copy from ..v_begin to load (training set)
@@ -374,21 +374,24 @@ void full_search_with_cross_validation(const string& foldername) {
         double validation_loss;
         if (train_result.feasible) {
             cout << "sizing feasible" << endl;
-            double sum_validation_loss = 0;
-            vector<double> load_validation(T_yr);
-            for (size_t yr = 0; yr < tot_yrs; ++yr) {
-                size_t load_validation_begin = yr * T_yr;
-                size_t load_validation_end = (yr + 1) * T_yr;
-                copy(load.begin() + load_validation_begin,
-                     load.begin() + load_validation_end,
-                     load_validation.begin());
-                double loss = sim(load_validation, solar_validation,
-                                  0, T_yr, train_result.B, train_result.PVs);
-                cout << "yr " << yr << " load validation loss = " << loss << endl;
-                sum_validation_loss += loss;
-            }
-            validation_loss = sum_validation_loss / tot_yrs;
-            cout << "avg validation loss = " << validation_loss << endl;
+            validation_loss = sim(load_validation, solar_validation,
+                        0, T_yr, train_result.B, train_result.PVs);
+            cout << "feasible, loss = " << validation_loss << endl;
+//            double sum_validation_loss = 0;
+//            vector<double> load_validation(T_yr);
+//            for (size_t yr = 0; yr < tot_yrs; ++yr) {
+//                size_t load_validation_begin = yr * T_yr;
+//                size_t load_validation_end = (yr + 1) * T_yr;
+//                copy(load.begin() + load_validation_begin,
+//                     load.begin() + load_validation_end,
+//                     load_validation.begin());
+//                double loss = sim(load_validation, solar_validation,
+//                                  0, T_yr, train_result.B, train_result.PVs);
+//                cout << "yr " << yr << " load validation loss = " << loss << endl;
+//                sum_validation_loss += loss;
+//            }
+//            validation_loss = sum_validation_loss / tot_yrs;
+//            cout << "avg validation loss = " << validation_loss << endl;
         } else {
             validation_loss = INFTY;
             cout << "infeasible sizing" << endl;
