@@ -3,6 +3,7 @@
 //
 
 #include "params_multiroof.h"
+#include <cmath>
 
 using namespace std;
 
@@ -47,7 +48,6 @@ void update_number_of_chunks(size_t nchunks) {
 
 #ifdef DEBUG
     cout << "chunk_size = " << chunk_size
-         << ", total_yrs = " << total_yrs
          << ", chunk_step = " << chunk_step
          << endl;
 #endif

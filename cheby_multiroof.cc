@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <Eigen/StdDeque>
 #include <iterator>
+#include <cmath>
 
 double lambda2;
 
@@ -81,14 +82,14 @@ inline double get_l(
 }
 
 RowVectorXd get_cheby_steps(const valarray<bool>& is_zeros) {
-    valarray<double> pv_diffs = (pv_maxs - pv_mins) / cheby_num_steps;
+    valarray<double> pv_diffs(1, n_solars);
     valarray<double> non_zero_pv_diffs = pv_diffs[!is_zeros];
     size_t non_zero_pv_diffs_size = non_zero_pv_diffs.size();
     RowVectorXd ret(non_zero_pv_diffs_size + 1);
     for (size_t l = 0; l < non_zero_pv_diffs_size; ++l) {
         ret(l) = non_zero_pv_diffs[l];
     }
-    ret(non_zero_pv_diffs_size) = (cells_max - cells_min) * kWh_in_one_cell / cheby_num_steps;
+    ret(non_zero_pv_diffs_size) = 1;
     return ret;
 }
 
