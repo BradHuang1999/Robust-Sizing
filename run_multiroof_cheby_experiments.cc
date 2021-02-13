@@ -124,8 +124,13 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    const string adagrad_sims_path = "results/full_search/load=3482_pv=7989 6423_3/";
-    const string cheby_path = adagrad_sims_path + "cheby/";
+    stringstream filename_ss;
+
+    filename_ss << "results/full_search/" << output_folder_path << "/";
+    const string adagrad_sims_path = filename_ss.str();
+
+    filename_ss << "cheby/";
+    const string cheby_path = filename_ss.str();
 
     ofstream summary_os(cheby_path + "summary2.csv");
     summary_os << "days_in_chunk,confidence,epsilon,battery,pv1,pv2,cost" << endl;
@@ -134,28 +139,26 @@ int main(int argc, char **argv)
         const string adagrad_sims_filename = adagrad_sims_file.path().filename();
         cout << adagrad_sims_filename << endl;
 
-        if (adagrad_sims_filename == "cheby" || adagrad_sims_filename != "01_15_07_02_daysinchunk=365_conf=0.95_epsilon=0.6.csv") {
+        if (adagrad_sims_filename == "cheby" || adagrad_sims_filename != "02_09_01_57_09_daysinchunk=365_conf=0.75_epsilon=0.45.csv") {
             cout << "skipping" << endl << endl;
             continue;
         }
 
-        const string days_in_chunk_string = adagrad_sims_filename.substr(24, 3);
+        const string days_in_chunk_string = adagrad_sims_filename.substr(27, 3);
         cout << days_in_chunk_string << ", ";
         days_in_chunk = stoi(days_in_chunk_string);
 
-        const string conf_string = adagrad_sims_filename.substr(33, 4);
+        const string conf_string = adagrad_sims_filename.substr(36, 4);
         cout << conf_string << ", ";
         confidence = stod(conf_string);
 
-        const string epsilon_string = adagrad_sims_filename.substr(46, 4);
+        const string epsilon_string = adagrad_sims_filename.substr(49, 4);
         cout << epsilon_string << ", " << endl;
         epsilon = stod(epsilon_string);
 
         cout << "days_in_chunk = " << days_in_chunk << endl
              << "conf = " << confidence << endl
              << "epsilon = " << epsilon << endl
-             << "lambda2 = " << lambda2 << endl
-             << "number_of_chunks = " << number_of_chunks << endl
              << endl;
 
         ofstream os(cheby_path + adagrad_sims_filename);
@@ -164,21 +167,26 @@ int main(int argc, char **argv)
         cout << endl << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
 
         vector<vector<SimulationMultiRoofResult>> adagrad_sims =
-                parse_csv(adagrad_sims_file.path().relative_path());
-
-        vector<valarray<bool>> is_zeros = {
-                {false, false},
-                {false, true},
-                {true, false}
-        };
+                parse_csv(adagrad_sims_file.path().relative_path(),
+                        0, (1u << n_solars), true,
+                        1, 2, 1 + n_solars, true);
 
         vector<SimulationMultiRoofResult> min_results;
 
-        for (size_t type = 0; type < 3; ++type) {
+        for (size_t type = 1; type < (1u << n_solars); ++type) {
             cout << "\n--------------------- start of type " << type << " ---------------------" << endl;
-            vector<SimulationMultiRoofResult> cheby_bound = get_chebyshev_bound(adagrad_sims[type], is_zeros[type]);
+            valarray<bool> is_zeros(n_solars);
+            for (size_t i = 0; i < n_solars; ++i) {
+                if ((type & (1u << i)) == 0) {
+                    is_zeros[i] = true;
+                }
+                cout << boolalpha << is_zeros[i] << ", ";
+            }
+            cout << endl;
+
+            vector<SimulationMultiRoofResult> cheby_bound = get_chebyshev_bound(adagrad_sims[type], is_zeros);
             for (const SimulationMultiRoofResult& cb: cheby_bound) {
-                os << type << "," << cb << endl;
+                os << type + 1 << "," << cb << endl;
             }
 
             if (cheby_bound.empty()) {

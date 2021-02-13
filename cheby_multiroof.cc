@@ -4,6 +4,7 @@
 
 #include "cheby_multiroof.h"
 #include <unordered_map>
+#include <unordered_set>
 #include <Eigen/StdDeque>
 #include <iterator>
 #include <cmath>
@@ -113,10 +114,10 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         const vector<SimulationMultiRoofResult>& adagrad_sims,
         const valarray<bool>& is_zeros) {
 
-    size_t non_zero_cols = 0;
+    size_t non_zeros = 0;
     for (size_t i = 0; i < n_solars; ++i) {
         if (!is_zeros[i]) {
-            ++non_zero_cols;
+            ++non_zeros;
         }
     }
 
@@ -124,9 +125,6 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
 
     size_t eta = sigma.rows();
     cout << "eta=" << eta << endl;
-
-    double l2 = (double)(eta * eta - 1) / ((1 - confidence) * eta * eta / (double)(non_zero_cols + 1) - eta);
-    cout << "l2=" << l2 << endl;
 
     RowVectorXd mu_eta = sigma.colwise().mean();
     cout << "mu_eta=" << mu_eta << endl;
@@ -136,13 +134,56 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
     MatrixXd sigma_eta = sigma_diff.transpose() * sigma_diff / (eta - 1);
     cout << "sigma_eta=" << endl << sigma_eta << endl << endl;
 
+    // Test for zero variance row/columns for each dimension. If so zero them out
+    unordered_set<size_t> zerovar_cols;
+    for (size_t i = 0; i <= non_zeros; ++i) {
+        if (sigma_eta.row(i).isZero()) {
+            zerovar_cols.insert(i);
+        }
+    }
+    size_t non_zerovars = non_zeros - zerovar_cols.size();
+    MatrixXd sigma_eta_non_zerovar = MatrixXd::Zero(non_zerovars + 1, non_zerovars + 1);
+    for (size_t i = 0, p = 0; i <= non_zeros; ++i) {
+        if (!zerovar_cols.count(i)) {
+            for (size_t j = 0, q = 0; j <= non_zeros; ++j) {
+                if (!zerovar_cols.count(j)) {
+                    sigma_eta_non_zerovar(p, q) = sigma_eta(i, j);
+                    ++q;
+                }
+            }
+            ++p;
+        }
+    }
+    cout << "sigma_eta_non_zerovar=" << endl << sigma_eta_non_zerovar << endl << endl;
 
+    MatrixXd sigma_eta_inv_non_zerovar = sigma_eta_non_zerovar.inverse();
+    MatrixXd sigma_eta_inv = MatrixXd::Zero(non_zeros + 1, non_zeros + 1);
+    for (size_t i = 0, p = 0; i <= non_zeros; ++i) {
+        if (!zerovar_cols.count(i)) {
+            for (size_t j = 0, q = 0; j <= non_zeros; ++j) {
+                if (!zerovar_cols.count(j)) {
+                    sigma_eta_inv(i, j) = sigma_eta_inv_non_zerovar(p, q);
+                    ++q;
+                }
+            }
+            ++p;
+        }
+    }
+    cout << "sigma_eta_inv_non_zerovar=" << endl << sigma_eta_inv_non_zerovar << endl << endl;
+    cout << "sigma_eta_inv=" << endl << sigma_eta_inv << endl << endl;
 
-    MatrixXd sigma_eta_inv = sigma_eta.inverse();
+    double l2 = (double)(eta * eta - 1) / ((1 - confidence) * eta * eta / (double)(non_zerovars + 1) - eta);
+    cout << "l2=" << l2 << endl;
 
     RowVectorXd cheby_mins = convert_to_rowvec(SimulationMultiRoofResult(cells_min, pv_mins), is_zeros);
+    cout << "cheby_mins=" << cheby_mins << endl;
+
     RowVectorXd cheby_maxs = convert_to_rowvec(SimulationMultiRoofResult(cells_max, pv_maxs), is_zeros);
+    cout << "cheby_maxs=" << cheby_maxs << endl;
+
     RowVectorXd cheby_steps = get_cheby_steps(is_zeros);
+    cout << "cheby_steps=" << cheby_steps << endl;
+    cout << endl << endl;
 
     // Tabu search for the non-dominated, pareto-efficient boundary
     vector<SimulationMultiRoofResult> ret;
@@ -164,7 +205,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
     };
 
     // First binary search at mu_eta points, increasing one dimension at once
-    for (size_t i = 0; i <= non_zero_cols; ++i) {
+    for (size_t i = 0; i <= non_zeros; ++i) {
         double col_L = mu_eta[i], col_U = cheby_maxs(i);
         bool is_viable = false;
         RowVectorXd bxi = mu_eta;
@@ -212,7 +253,11 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         deque<bool> neighbor_q_bool;
 
         // test for all its neighbors
-        for (size_t i = 0; i <= non_zero_cols; ++i) {
+        for (size_t i = 0; i <= non_zeros; ++i) {
+            if (zerovar_cols.count(i)) {
+                continue;
+            }
+
             // test for lower neighbor
             RowVectorXd lower_xi = curr_xi;
             lower_xi(i) -= cheby_steps(i);
