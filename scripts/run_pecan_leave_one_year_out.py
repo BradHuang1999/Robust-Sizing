@@ -39,10 +39,10 @@ if __name__ == '__main__':
     param_metric = 1 # 1=EUE, 0=LOLP
     param_days_in_chunk = 365
     param_battery_varcost = 500
-    param_battery_max = 60
+    param_battery_max = 120
     param_pv_fixcost = 2000
     param_pv_varcost = 500
-    param_pv_max = 30
+    param_pv_max = 60
 
     # get ids
     load_ids = [re.search(r"example_inputs/pecan/normed/load_([0-9]+).txt", path).group(1) for path in load_paths]
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     pv_command = " ".join(f'{param_pv_fixcost} {param_pv_varcost} {param_pv_max} {pv_path}' for pv_path in pv_paths)
 
     commands = [
-        f'{param_search_mode} {param_type_mode} {param_binary} "{load_pv_ids % load_id}" {param_n_solars} {param_metric} {epsilon} {conf} {param_days_in_chunk} {param_battery_varcost} {param_battery_max} {load_path} {pv_command}' \
+        f'{param_binary} {param_search_mode} {param_type_mode} "{load_pv_ids % load_id}" {param_n_solars} {param_metric} {epsilon} {conf} {param_days_in_chunk} {param_battery_varcost} {param_battery_max} {load_path} {pv_command}' \
         for (load_id, load_path), conf, epsilon in itertools.product(loads, confs, epsilons)
     ]
 
