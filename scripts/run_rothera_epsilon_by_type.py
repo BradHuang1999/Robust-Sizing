@@ -37,7 +37,7 @@ if __name__ == '__main__':
         '10000 188.16 69.25 example_inputs/rothera/Bonner_effective.txt ' + \
         '10000 188.16 1048.84 example_inputs/rothera/Hangar_effective.txt ' + \
         '10000 188.16 317.32 example_inputs/rothera/Giants_effective.txt'
-        for type_num, conf, epsilon in itertools.product(range(n_types), confs, epsilons)
+        for type_num, conf, epsilon in itertools.product(range(1, n_types), confs, epsilons)
     ]
 
     # print params

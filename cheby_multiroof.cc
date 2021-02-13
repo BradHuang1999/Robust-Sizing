@@ -82,7 +82,7 @@ inline double get_l(
 }
 
 RowVectorXd get_cheby_steps(const valarray<bool>& is_zeros) {
-    valarray<double> pv_diffs(1, n_solars);
+    valarray<double> pv_diffs(5, n_solars);
     valarray<double> non_zero_pv_diffs = pv_diffs[!is_zeros];
     size_t non_zero_pv_diffs_size = non_zero_pv_diffs.size();
     RowVectorXd ret(non_zero_pv_diffs_size + 1);
