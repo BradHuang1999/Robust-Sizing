@@ -264,6 +264,8 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
         }
         adagrad_results_os.close();
 
+        cout << "Adagrad ended at " << curr_time("%m/%d %H:%M:%S") << ", starting cheby bound search" << endl << endl;
+
         // get cheby bound
         vector<SimulationMultiRoofResult> cheby_results = get_chebyshev_bound(min_adagrads, is_zeros);
 

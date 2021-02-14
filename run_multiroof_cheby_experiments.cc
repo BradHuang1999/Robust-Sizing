@@ -174,6 +174,10 @@ int main(int argc, char **argv)
         vector<SimulationMultiRoofResult> min_results;
 
         for (size_t type = 1; type < (1u << n_solars); ++type) {
+            if (type_mode != 0 && type_mode != type) {
+                continue;
+            }
+
             cout << "\n--------------------- start of type " << type << " ---------------------" << endl;
             valarray<bool> is_zeros(n_solars);
             for (size_t i = 0; i < n_solars; ++i) {
@@ -186,7 +190,7 @@ int main(int argc, char **argv)
 
             vector<SimulationMultiRoofResult> cheby_bound = get_chebyshev_bound(adagrad_sims[type], is_zeros);
             for (const SimulationMultiRoofResult& cb: cheby_bound) {
-                os << type + 1 << "," << cb << endl;
+                os << type << "," << cb << endl;
             }
 
             if (cheby_bound.empty()) {

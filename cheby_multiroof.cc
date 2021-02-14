@@ -223,9 +223,9 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
         }
 
         if (is_viable) {
+            bxi(i) = col_U;
             cout << "col " << i << " is viable at " << col_U << endl
                  << "- viable point is " << bxi << endl;
-            bxi(i) = col_U;
             search_q.push_back(move(bxi));
             search_q_bool.push_back(true);
         } else {
@@ -303,6 +303,8 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
             move(neighbor_q_bool.begin(), neighbor_q_bool.end(), back_inserter(search_q_bool));
         }
     }
+
+    cout << "Cheby finished. Final cache size = " << seen.size() << endl;
 
     return ret;
 }
