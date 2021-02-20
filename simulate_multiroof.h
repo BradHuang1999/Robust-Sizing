@@ -26,7 +26,6 @@ double static default_adagrad_step_size = 1;
 double static cost_threshold = 50;
 size_t static adagrad_min_it = 50;
 size_t static adagrad_max_it = 2000;
-double static adagrad_stepsize = 100;
 double static decay_rate = 0.9;
 size_t static consec_over_threshold = 5;
 

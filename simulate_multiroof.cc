@@ -231,13 +231,11 @@ simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<ve
             }
         }
 
-        SimulationMultiRoofResult curr_run_result = binary_search_result(
+        last_run_result = binary_search_result(
                 load_trace, solar_traces, start_index, end_index, pv_values, b_0);
-        if (!curr_run_result.feasible) {
+        if (!last_run_result.feasible) {
             return ret;
         }
-
-        last_run_result = move(curr_run_result);
 
         // terminate if curr cost >= diminishing mean for a consecutive number of 5 times
         if (it_count >= adagrad_min_it) {

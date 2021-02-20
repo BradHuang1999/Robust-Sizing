@@ -47,7 +47,6 @@ void adagrad_search(size_t start_index) {
                 << "_conf=" << confidence
                 << "_epsilon=" << epsilon
                 << "_num_steps=" << num_steps
-                << "_adagrad_stepsize=" << adagrad_stepsize
                 << ".csv";
 
     ofstream os(filename_ss.str());
