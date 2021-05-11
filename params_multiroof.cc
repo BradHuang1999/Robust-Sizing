@@ -32,7 +32,7 @@ string SimulationMultiRoofResult::cells_pv_serialize() const {
     return ss.str();
 }
 
-ostream& operator<< (ostream& os, const SimulationMultiRoofResult& result) {
+ostream &operator<<(ostream &os, const SimulationMultiRoofResult &result) {
     return os << result.cells_pv_serialize() << "," << result.cost;
 }
 
@@ -41,7 +41,7 @@ void update_number_of_chunks(size_t nchunks) {
     chunk_size = days_in_chunk * 24 / T_u;
 
     chunk_total = load.size();
-    for (auto& solar_vec: solar) {
+    for (auto &solar_vec: solar) {
         chunk_total *= solar_vec.size() / T_yr;
     }
     chunk_step = chunk_total / number_of_chunks;

@@ -4,12 +4,10 @@
 # In[1]:
 
 
-import os
-from sys import argv
-import numpy as np
-from subprocess import run, PIPE
 import matplotlib.pyplot as plt
-
+import os
+from subprocess import run, PIPE
+from sys import argv
 
 # In[2]:
 
@@ -22,10 +20,9 @@ os.chdir('../../')
 
 def run_robust_sizing(binary, pv_cost, battery_cost, pv_max, cell_max,
                       metric, epsilon, conf, n_days, load_file, pv_file):
-    
     cmd = f'{binary} {pv_cost} {battery_cost} {pv_max} {cell_max} {metric} {epsilon} {conf} {n_days} {load_file} {pv_file}'
     p = run(cmd, stdout=PIPE, stderr=PIPE, shell=True)
-    
+
     return p.stdout.decode(), p.returncode
 
 
@@ -33,24 +30,23 @@ def run_robust_sizing(binary, pv_cost, battery_cost, pv_max, cell_max,
 
 
 def get_chebys(output):
-
     output_lines = output.split('\n')
 
     l = 0
 
-    chunks = []            # [cell, pv, cost]
+    chunks = []  # [cell, pv, cost]
     cheby_on_C = [[], []]  # cell, pv
     cheby_on_B = [[], []]  # cell, pv
 
     while output_lines[l] != 'DEBUG: sizing_curves':
-        l += 1 # skip
+        l += 1  # skip
 
-    l += 1 # skip 'DEBUG: sizing_curves'
+    l += 1  # skip 'DEBUG: sizing_curves'
 
     while output_lines[l] != 'DEBUG: sizing_curves_end':
-        l += 1 # skip 'chunk_n' line
+        l += 1  # skip 'chunk_n' line
 
-        chunk = [[], [], []] # cell, pv, cost
+        chunk = [[], [], []]  # cell, pv, cost
 
         while 'chunk' not in output_lines[l] and output_lines[l] != 'DEBUG: sizing_curves_end':
             cell, pv, cost = map(float, output_lines[l].split())
@@ -64,10 +60,10 @@ def get_chebys(output):
     while output_lines[l] != 'DEBUG: cheby_on_C':
         l += 1
 
-    l += 1 # skip 'cheby_on_C' line
+    l += 1  # skip 'cheby_on_C' line
 
     cheby_on_C_len = int(output_lines[l])
-    l += 1 # skip len line
+    l += 1  # skip len line
 
     for _ in range(cheby_on_C_len):
         cell, pv = map(float, output_lines[l].split())
@@ -78,10 +74,10 @@ def get_chebys(output):
     while output_lines[l] != 'DEBUG: cheby_on_B':
         l += 1
 
-    l += 1 # skip 'cheby_on_B' line
+    l += 1  # skip 'cheby_on_B' line
 
     cheby_on_B_len = int(output_lines[l])
-    l += 1 # skip len line
+    l += 1  # skip len line
 
     for _ in range(cheby_on_B_len):
         cell, pv = map(float, output_lines[l].split())
@@ -98,7 +94,6 @@ def get_chebys(output):
 
 
 def draw(chunks, cheby_on_B, cheby_on_C, title):
-    
     fig = plt.figure(figsize=(15, 10))
 
     plt.title(title)
@@ -112,24 +107,23 @@ def draw(chunks, cheby_on_B, cheby_on_C, title):
     plt.plot([], [], 'b:', label='chunks')
     for chunk in chunks:
         plt.scatter(x=chunk[0], y=chunk[1], s=1)
-        
+
     plt.legend()
-        
+
     return fig
 
-        
+
 def run_plot(constant_labels, input_labels, save_dir=None):
-    
     stdout, returncode = run_robust_sizing(**constant_labels, **input_labels)
 
     if not returncode:
         chunks, cheby_on_B, cheby_on_C, result_line = get_chebys(stdout)
-        
+
         title = f'input={input_labels}, result={result_line}, len(cheby_on_B)={len(cheby_on_B[0])}, len(cheby_on_C)={len(cheby_on_C[0])}'
         print(title)
-        
+
         fig = draw(chunks, cheby_on_B, cheby_on_C, title)
-        
+
         if save_dir:
             fig.savefig(f'{save_dir}/{input_labels["pv_max"]}_{input_labels["cell_max"]}_{input_labels["epsilon"]}.png')
         else:
@@ -150,7 +144,6 @@ if file_id == 'default':
 else:
     file_prefix = file_id + '_'
 
-
 constant_labels = {
     'binary': './bin/debug/sim',
     'pv_cost': 2000,
@@ -164,8 +157,6 @@ constant_labels = {
 
 save_dir = f'analytics/chebyshev_curve/{file_prefix}{save_dir_suffix}'
 
-
-
 for epsilon in [0.01, 0.05, 0.1, 0.25, 0.5, 0.75]:
     input_labels = {
         'pv_max': 70,
@@ -173,7 +164,6 @@ for epsilon in [0.01, 0.05, 0.1, 0.25, 0.5, 0.75]:
         'epsilon': epsilon,
     }
     run_plot(constant_labels, input_labels, save_dir)
-    
 
 for pv_max, cell_max in [(10, 20), (100, 300), (150, 300), (150, 500), (1000, 2000)]:
     input_labels = {
@@ -182,4 +172,3 @@ for pv_max, cell_max in [(10, 20), (100, 300), (150, 300), (150, 500), (1000, 20
         'epsilon': 0.05,
     }
     run_plot(constant_labels, input_labels, save_dir)
-

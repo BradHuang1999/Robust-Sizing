@@ -23,14 +23,14 @@ struct curr_time {
     }
 };
 
-ostream& operator<<( ostream& os, const curr_time& ct) {
+ostream &operator<<(ostream &os, const curr_time &ct) {
     return os << ct.put();
 }
 
 template<typename T>
-std::ostream& operator<<( std::ostream& os, const std::valarray<T>& v ) {
+std::ostream &operator<<(std::ostream &os, const std::valarray<T> &v) {
     os << "{ ";
-    for (const T& d: v) {
+    for (const T &d: v) {
         os << d << " ";
     }
     os << "}";
@@ -98,7 +98,7 @@ void adagrad_search(size_t start_index) {
         vector<SimulationMultiRoofResult> adagrad_results = simulate_deterministic_adagrad(
                 load, solar, start_index, start_index + chunk_size, pv_start, is_zeros);
 
-        for (SimulationMultiRoofResult& r: adagrad_results) {
+        for (SimulationMultiRoofResult &r: adagrad_results) {
             os << type << "," << r << endl;
         }
     }
@@ -146,7 +146,7 @@ void grid_search(size_t start_index) {
 SimulationMultiRoofResult min_cost(const vector<SimulationMultiRoofResult> &results) {
     SimulationMultiRoofResult min_result;
     double min_val = INFTY;
-    for (const auto& s: results) {
+    for (const auto &s: results) {
         if (s.cost < min_val) {
             min_val = s.cost;
             min_result = s;
@@ -155,7 +155,7 @@ SimulationMultiRoofResult min_cost(const vector<SimulationMultiRoofResult> &resu
     return min_result;
 }
 
-SimulationMultiRoofResult full_search(const string& foldername, const curr_time& ct) {
+SimulationMultiRoofResult full_search(const string &foldername, const curr_time &ct) {
     filesystem::create_directory(foldername);
 
     stringstream cheby_ss;
@@ -212,7 +212,7 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
         cheby_results_os << "cost" << endl;
 
         valarray<double> pv_start = pv_maxs;
-        valarray<bool> is_zeros = (pv_maxs == (double)0);
+        valarray<bool> is_zeros = (pv_maxs == (double) 0);
 
         bool skip = false;
         for (size_t i = 0; i < n_solars; ++i) {
@@ -258,7 +258,7 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
         }
 
         // print out min_adagrad points
-        for (const SimulationMultiRoofResult& r: min_adagrads) {
+        for (const SimulationMultiRoofResult &r: min_adagrads) {
             adagrad_results_os << type << "," << r << endl;
         }
         adagrad_results_os.close();
@@ -269,7 +269,7 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
         vector<SimulationMultiRoofResult> cheby_results = get_chebyshev_bound(min_adagrads, is_zeros);
 
         // print cheby bound
-        for (const SimulationMultiRoofResult& r: cheby_results) {
+        for (const SimulationMultiRoofResult &r: cheby_results) {
             cheby_results_os << type << "," << r << endl;
         }
         cheby_results_os.close();
@@ -307,7 +307,7 @@ SimulationMultiRoofResult full_search(const string& foldername, const curr_time&
     return ret_result;
 }
 
-void full_search_with_cross_validation(const string& foldername) {
+void full_search_with_cross_validation(const string &foldername) {
     curr_time ct("%m_%d_%H_%M_%S");
 
     for (size_t s = 0; s < n_solars; ++s) {
@@ -327,7 +327,8 @@ void full_search_with_cross_validation(const string& foldername) {
     vector<vector<double>> solar_validation(n_solars, vector<double>(T_yr));
 
     for (size_t validation_yr = 0; validation_yr < tot_yrs; ++validation_yr) {
-        cout << "\n\n------------------------------- validation year " << validation_yr << " -------------------------------\n\n" << endl;
+        cout << "\n\n------------------------------- validation year " << validation_yr
+             << " -------------------------------\n\n" << endl;
 
         size_t validation_begin = validation_yr * T_yr;
         size_t validation_end = (validation_yr + 1) * T_yr;
@@ -376,7 +377,7 @@ void full_search_with_cross_validation(const string& foldername) {
         if (train_result.feasible) {
             cout << "sizing feasible" << endl;
             validation_loss = sim(load_validation, solar_validation,
-                        0, T_yr, train_result.B, train_result.PVs);
+                                  0, T_yr, train_result.B, train_result.PVs);
             cout << "feasible, loss = " << validation_loss << endl;
 //            double sum_validation_loss = 0;
 //            vector<double> load_validation(T_yr);
@@ -473,18 +474,14 @@ void chernoff_search(double target_p) {
             double cells_U = cells_max, cells_L = cells_min;
             double p_delta_U = 0;
 
-            while (cells_U - cells_L > cells_step)
-            {
+            while (cells_U - cells_L > cells_step) {
                 double mid_cells = (cells_L + cells_U) / 2.0;
                 double p_delta = chernoff_result(load, solar, mid_cells, pvs);
 
-                if (p_delta >= target_p)
-                {
+                if (p_delta >= target_p) {
                     cells_U = mid_cells;
                     p_delta_U = p_delta;
-                }
-                else
-                {
+                } else {
                     // (loss < epsilon)
                     cells_L = mid_cells;
                 }
@@ -502,7 +499,7 @@ void chernoff_search(double target_p) {
     os.close();
 }
 
-void chernoff_tabu_search(double target_p, const string& foldername="") {
+void chernoff_tabu_search(double target_p, const string &foldername = "") {
     stringstream filename_ss;
     filename_ss << "results/chernoff_tabu_search/" << foldername << curr_time("%m_%d_%H_%M")
                 << "_daysinchunk=" << days_in_chunk
@@ -519,7 +516,7 @@ void chernoff_tabu_search(double target_p, const string& foldername="") {
     }
     os << "battery,pv1,pv2,cost" << endl;
 
-    for (const SimulationMultiRoofResult& s: ret) {
+    for (const SimulationMultiRoofResult &s: ret) {
         os << s << endl;
     }
 
@@ -531,23 +528,23 @@ void chernoff_tabu_search(double target_p, const string& foldername="") {
     }
 }
 
-void experiment(const string& foldername="") {
+void experiment(const string &foldername = "") {
 //    vector<double> epsilon_vals {0.1, 0.3};
 //    vector<double> epsilon_vals {0.1};
 //    vector<double> epsilon_vals {0.3};
-    vector<double> epsilon_vals {0.5};
+    vector<double> epsilon_vals{0.5};
 
-    vector<double> p_vals {0.9, 0.8, 0.5};
+    vector<double> p_vals{0.9, 0.8, 0.5};
 //    vector<double> p_vals {0.5};
 //    vector<double> p_vals {0.8};
 //    vector<double> p_vals {0.9};
 
-    vector<double> conf_vals {0.95, 0.85};
+    vector<double> conf_vals{0.95, 0.85};
 //    vector<double> conf_vals {0.85};
 //    vector<double> conf_vals {0.95};
 
 //    vector<size_t> days_in_chunk_vals {100, 200, 365};
-    vector<size_t> days_in_chunk_vals {365};
+    vector<size_t> days_in_chunk_vals{365};
 
     cout << "\nsim_type"
          << ",days_in_chunk"

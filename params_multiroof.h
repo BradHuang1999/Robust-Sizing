@@ -42,9 +42,8 @@ struct SimulationMultiRoofResult {
         PVs = INFTY;
     }
 
-    SimulationMultiRoofResult(double B_val, valarray<double> PVs_val):
-            feasible(true), B(B_val), PVs(move(PVs_val))
-    {
+    SimulationMultiRoofResult(double B_val, valarray<double> PVs_val) :
+            feasible(true), B(B_val), PVs(move(PVs_val)) {
         cost = B * B_inv;
         for (size_t i = 0; i < n_solars; ++i) {
             double pv_value = PVs[i];
@@ -56,10 +55,11 @@ struct SimulationMultiRoofResult {
 
 public:
     string cells_pv_serialize() const;
-    friend ostream& operator<< (ostream& os, const SimulationMultiRoofResult& result);
+
+    friend ostream &operator<<(ostream &os, const SimulationMultiRoofResult &result);
 };
 
-void update_number_of_chunks(size_t nchunks=number_of_chunks);
+void update_number_of_chunks(size_t nchunks = number_of_chunks);
 
 int process_input(int argc, char **argv);
 

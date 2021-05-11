@@ -15,6 +15,7 @@ using namespace std;
 
 struct curr_time {
     const char *fmt;
+
     curr_time(const char *fmt) : fmt(fmt) {}
 };
 
@@ -23,16 +24,18 @@ tm *get_local_time() {
     return localtime(&t);
 }
 
-ostream& operator<<( ostream& os, const curr_time ct) {
+ostream &operator<<(ostream &os, const curr_time ct) {
     tm *local_time = get_local_time();
     os << put_time(local_time, ct.fmt);
     return os;
 }
 
-vector<vector<SimulationMultiRoofResult>> parse_csv(const string& file_name,
-        size_t type_col = 0, size_t number_of_types = 3, bool normalize_battery = true,
-        size_t battery_col = 1, size_t pv_col_start = 2, size_t pv_col_end = 3,
-        bool ignore_header = true) {
+vector<vector<SimulationMultiRoofResult>> parse_csv(const string &file_name,
+                                                    size_t type_col = 0, size_t number_of_types = 3,
+                                                    bool normalize_battery = true,
+                                                    size_t battery_col = 1, size_t pv_col_start = 2,
+                                                    size_t pv_col_end = 3,
+                                                    bool ignore_header = true) {
 
     if (pv_col_start > pv_col_end) {
         throw range_error("required: pv_col_start <= pv_col_end");
@@ -65,7 +68,7 @@ vector<vector<SimulationMultiRoofResult>> parse_csv(const string& file_name,
     }
 
     for (size_t l = 1; getline(fs, curr_line); ++l) {
-        istringstream line_iss( curr_line );
+        istringstream line_iss(curr_line);
 
         size_t type;
         double battery;
@@ -107,7 +110,7 @@ vector<vector<SimulationMultiRoofResult>> parse_csv(const string& file_name,
 SimulationMultiRoofResult min_cost(const vector<SimulationMultiRoofResult> &results) {
     SimulationMultiRoofResult min_result = results[0];
     double min_val = results[0].cost;
-    for (const auto& s: results) {
+    for (const auto &s: results) {
         if (s.cost < min_val) {
             min_val = s.cost;
             min_result = s;
@@ -116,8 +119,7 @@ SimulationMultiRoofResult min_cost(const vector<SimulationMultiRoofResult> &resu
     return min_result;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     int input_process_status = process_input(argc, argv);
     if (input_process_status) {
         cerr << "Illegal input" << endl;
@@ -135,11 +137,12 @@ int main(int argc, char **argv)
     ofstream summary_os(cheby_path + "summary2.csv");
     summary_os << "days_in_chunk,confidence,epsilon,battery,pv1,pv2,cost" << endl;
 
-    for (const auto& adagrad_sims_file: filesystem::directory_iterator(adagrad_sims_path)) {
+    for (const auto &adagrad_sims_file: filesystem::directory_iterator(adagrad_sims_path)) {
         const string adagrad_sims_filename = adagrad_sims_file.path().filename();
         cout << adagrad_sims_filename << endl;
 
-        if (adagrad_sims_filename == "cheby" || adagrad_sims_filename != "02_09_01_57_09_daysinchunk=365_conf=0.75_epsilon=0.45.csv") {
+        if (adagrad_sims_filename == "cheby" ||
+            adagrad_sims_filename != "02_09_01_57_09_daysinchunk=365_conf=0.75_epsilon=0.45.csv") {
             cout << "skipping" << endl << endl;
             continue;
         }
@@ -168,8 +171,8 @@ int main(int argc, char **argv)
 
         vector<vector<SimulationMultiRoofResult>> adagrad_sims =
                 parse_csv(adagrad_sims_file.path().relative_path(),
-                        0, (1u << n_solars), true,
-                        1, 2, 1 + n_solars, true);
+                          0, (1u << n_solars), true,
+                          1, 2, 1 + n_solars, true);
 
         vector<SimulationMultiRoofResult> min_results;
 
@@ -189,7 +192,7 @@ int main(int argc, char **argv)
             cout << endl;
 
             vector<SimulationMultiRoofResult> cheby_bound = get_chebyshev_bound(adagrad_sims[type], is_zeros);
-            for (const SimulationMultiRoofResult& cb: cheby_bound) {
+            for (const SimulationMultiRoofResult &cb: cheby_bound) {
                 os << type << "," << cb << endl;
             }
 

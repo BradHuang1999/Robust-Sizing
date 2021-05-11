@@ -1,24 +1,21 @@
 #!/usr/bin/env python3.7
 
-from glob import glob
-import os
-
-import re
 import itertools
-
-import subprocess
 import multiprocessing as mp
-
+import os
+import subprocess
 from sys import argv
+
 
 def run_command(cmd):
     print('running:', cmd)
     result = subprocess.check_output(cmd, shell=True)
     return result.decode()
 
+
 if __name__ == '__main__':
     # parse arguments
-    _, confs, epsilons, num_processes  = argv
+    _, confs, epsilons, num_processes = argv
     confs = confs.split(',')
     epsilons = epsilons.split(',')
     num_processes = int(num_processes)
@@ -26,7 +23,7 @@ if __name__ == '__main__':
     param_binary = 'bin/multiroof_test'
     n_solar = 5
     n_types = 1 << n_solar
-    
+
     os.chdir('..')
 
     commands = [

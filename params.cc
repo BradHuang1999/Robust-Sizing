@@ -14,9 +14,9 @@ double pv_step; // search in steps of x kW
 vector<double> solar;
 
 int process_input(int argc, char **argv, bool process_metric_input) {
-    
+
     int i = 0;
-    
+
     string inv_PV_string = argv[++i];
     PV_inv = stod(inv_PV_string);
 
@@ -124,16 +124,16 @@ int process_input(int argc, char **argv, bool process_metric_input) {
     }
 
 #ifdef DEBUG
-	cout << "checking for errors in load file..." << endl;
+    cout << "checking for errors in load file..." << endl;
 #endif
 
-	if (load[0] < 0) {
-		cerr << "error reading load file " << loadfile << endl;
-		return 1;
-	} else if (load.size() % T_yr > 0) {
-	    cerr << "load file length needs to be multiple of " << T_yr << endl;
-	    return 1;
-	}
+    if (load[0] < 0) {
+        cerr << "error reading load file " << loadfile << endl;
+        return 1;
+    } else if (load.size() % T_yr > 0) {
+        cerr << "load file length needs to be multiple of " << T_yr << endl;
+        return 1;
+    }
 
     string solarfile = argv[++i];
 
@@ -162,13 +162,13 @@ int process_input(int argc, char **argv, bool process_metric_input) {
     }
 
 #ifdef DEBUG
-	cout << "checking for errors in solar file..." << endl;
+    cout << "checking for errors in solar file..." << endl;
 #endif
 
-	if (solar[0] < 0) {
-		cerr << "error reading solar file " << solarfile << endl;
-		return 1;
-	} else if (solar.size() % T_yr > 0) {
+    if (solar[0] < 0) {
+        cerr << "error reading solar file " << solarfile << endl;
+        return 1;
+    } else if (solar.size() % T_yr > 0) {
         cerr << "solar file length needs to be multiple of " << T_yr << endl;
         return 1;
     }

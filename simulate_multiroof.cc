@@ -21,20 +21,20 @@ size_t total_sim_called = 0;
 void update_parameters(double n) {
     num_cells = n;
 
-    a1_intercept = 0.0*num_cells;
-    a2_intercept = kWh_in_one_cell*num_cells;
+    a1_intercept = 0.0 * num_cells;
+    a2_intercept = kWh_in_one_cell * num_cells;
 
-    alpha_d = a2_intercept*1.0;
-    alpha_c = a2_intercept*1.0;
+    alpha_d = a2_intercept * 1.0;
+    alpha_c = a2_intercept * 1.0;
 }
 
 // decrease the applied (charging) power by increments of (1/30) until the power is
 // low enough to avoid violating the upper energy limit constraint.
 double calc_max_charging(double power, double b_prev) {
-    double step = power/30.0;
+    double step = power / 30.0;
     for (double c = power; c >= 0; c -= step) {
-        double upper_lim = a2_slope*(c/nominal_voltage_c) + a2_intercept;
-        double b = b_prev + c*eta_c*T_u;
+        double upper_lim = a2_slope * (c / nominal_voltage_c) + a2_intercept;
+        double b = b_prev + c * eta_c * T_u;
         if (b <= upper_lim) {
             return c;
         }
@@ -46,10 +46,10 @@ double calc_max_charging(double power, double b_prev) {
 // decrease the applied (discharging) power by increments of (1/30) until the power is
 // low enough to avoid violating the lower energy limit constraint.
 double calc_max_discharging(double power, double b_prev) {
-    double step = power/30.0;
+    double step = power / 30.0;
     for (double d = power; d >= 0; d -= step) {
-        double lower_lim = a1_slope*(d/nominal_voltage_d) + a1_intercept;
-        double b = b_prev - d*eta_d*T_u;
+        double lower_lim = a1_slope * (d / nominal_voltage_d) + a1_intercept;
+        double b = b_prev - d * eta_d * T_u;
         if (b >= lower_lim) {
             return d;
         }
@@ -67,7 +67,7 @@ double sim(const vector<double> &load_trace, const vector<vector<double>> &solar
     update_parameters(cells);
 
     // set the battery
-    double b = b_0*cells*kWh_in_one_cell; //0.5*a2_intercept
+    double b = b_0 * cells * kWh_in_one_cell; //0.5*a2_intercept
 
     int loss_events = 0;
 
@@ -82,7 +82,7 @@ double sim(const vector<double> &load_trace, const vector<vector<double>> &solar
 
         double total_solar = 0;
         for (size_t i = 0; i < n_solars; ++i) {
-            const vector<double>& solar_trace = solar_traces[i];
+            const vector<double> &solar_trace = solar_traces[i];
             size_t t_index = t % solar_trace.size();
             total_solar += solar_trace[t_index] * pvs[i];
         }
@@ -92,12 +92,12 @@ double sim(const vector<double> &load_trace, const vector<vector<double>> &solar
         // first, calculate how much power is available for charging, and how much is needed to discharge
         if (total_solar > total_load) {
             const double c = total_solar - total_load;
-            const double max_c = fmin(calc_max_charging(c,b), alpha_c);
-            b = b + max_c*eta_c*T_u;
+            const double max_c = fmin(calc_max_charging(c, b), alpha_c);
+            b = b + max_c * eta_c * T_u;
         } else {
             const double d = total_load - total_solar;
-            const double max_d = fmin(calc_max_discharging(d,b), alpha_d);
-            b = b - max_d*eta_d*T_u;
+            const double max_d = fmin(calc_max_discharging(d, b), alpha_d);
+            b = b - max_d * eta_d * T_u;
 
             // if we didnt get to discharge as much as we wanted, there is a loss
             if (max_d < d) {
@@ -109,10 +109,10 @@ double sim(const vector<double> &load_trace, const vector<vector<double>> &solar
 
     if (metric == 0) {
         // lolp
-        return loss_events / (double)(end_index - start_index);
+        return loss_events / (double) (end_index - start_index);
     } else {
         // metric == 1, eue
-        return load_deficit / (double)load_sum;
+        return load_deficit / (double) load_sum;
     }
 }
 
@@ -122,8 +122,7 @@ binary_search_result(const vector<double> &load_trace, const vector<vector<doubl
     double loss_U = INFTY;
     bool test_L = true;
 
-    while (cells_U - cells_L > cells_step)
-    {
+    while (cells_U - cells_L > cells_step) {
         double cells_M = (cells_L + cells_U) / 2.0;
         double loss = sim(load_trace, solar_traces, start_index, end_index, cells_M, pvs, 0);
 
@@ -153,8 +152,7 @@ binary_search_result(const vector<double> &load_trace, const vector<vector<doubl
 vector<SimulationMultiRoofResult>
 simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
                                size_t start_index, size_t end_index, const valarray<double> &init_pv,
-                               const valarray<bool> &is_zeros, double b_0, double fudge_factor)
-{
+                               const valarray<bool> &is_zeros, double b_0, double fudge_factor) {
     default_random_engine generator;
 
     vector<normal_distribution<double>> distribution;
@@ -257,8 +255,8 @@ simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<ve
 }
 
 
-double random_simulate_cheroff(const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
-        double cells, valarray<double> &pvs, double b_0) {
+double random_simulate_cheroff(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+                               double cells, valarray<double> &pvs, double b_0) {
 
     uniform_int_distribution<size_t> start_index_dist(0, chunk_total);
     default_random_engine generator;
@@ -268,7 +266,7 @@ double random_simulate_cheroff(const vector <double> &load_trace, const vector<v
     for (size_t i = 0; i < number_of_chunks; ++i) {
         size_t start_index = start_index_dist(generator);
         double loss = sim(load_trace, solar_traces,
-                start_index, start_index + chunk_size, cells, pvs, b_0);
+                          start_index, start_index + chunk_size, cells, pvs, b_0);
         if (loss < epsilon) {
             ++n_target_satisfied;
         }
@@ -279,8 +277,8 @@ double random_simulate_cheroff(const vector <double> &load_trace, const vector<v
 
 }
 
-double deterministic_simulate_cheroff(const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
-        double cells, valarray<double> &pvs, double b_0) {
+double deterministic_simulate_cheroff(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+                                      double cells, valarray<double> &pvs, double b_0) {
 
     size_t n_target_satisfied = 0;
 
@@ -306,10 +304,10 @@ double deterministic_simulate_cheroff(const vector <double> &load_trace, const v
 }
 
 double get_cheroff(double p_tilde) {
-    return p_tilde - sqrt( -3 * p_tilde * log(1 - confidence) / number_of_chunks);
+    return p_tilde - sqrt(-3 * p_tilde * log(1 - confidence) / number_of_chunks);
 }
 
-double chernoff_result(const vector <double> &load_trace, const vector<vector<double>> &solar_traces,
+double chernoff_result(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
                        double cells, valarray<double> &pvs, double b_0) {
     double p_tilde = deterministic_simulate_cheroff(load_trace, solar_traces, cells, pvs, b_0);
     double p_delta = get_cheroff(p_tilde);
@@ -317,7 +315,8 @@ double chernoff_result(const vector <double> &load_trace, const vector<vector<do
 }
 
 vector<SimulationMultiRoofResult>
-tabu_cheroff(const vector <double> &load_trace, const vector<vector<double>> &solar_traces, double target_p, double b_0) {
+tabu_cheroff(const vector<double> &load_trace, const vector<vector<double>> &solar_traces, double target_p,
+             double b_0) {
     // search for an upper, pareto-efficient surface that
     // satisfies the cheroff bound
 
@@ -360,7 +359,7 @@ tabu_cheroff(const vector <double> &load_trace, const vector<vector<double>> &so
     search_q.emplace_back(first_result, true);
 
     while (!search_q.empty()) {
-        auto& curr_pair = search_q.front();
+        auto &curr_pair = search_q.front();
         search_q.pop_front();
 
         SimulationMultiRoofResult curr_result = curr_pair.first;

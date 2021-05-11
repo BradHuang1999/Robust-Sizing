@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(Robust_Sizing)
 
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 set(CMAKE_C_COMPILER /usr/local/bin/gcc-10)
 set(CMAKE_CXX_COMPILER /usr/local/bin/g++-10)
@@ -22,7 +22,7 @@ add_executable(run_multiroof_cheby_experiments
         simulate_multiroof.cc
         simulate_system.h
         )
-target_link_libraries (run_multiroof_cheby_experiments Eigen3::Eigen)
+target_link_libraries(run_multiroof_cheby_experiments Eigen3::Eigen)
 
 add_executable(run_multiroof_test
         cheby_multiroof.cc
@@ -35,7 +35,7 @@ add_executable(run_multiroof_test
         simulate_multiroof.cc
         simulate_system.h
         )
-target_link_libraries (run_multiroof_test Eigen3::Eigen)
+target_link_libraries(run_multiroof_test Eigen3::Eigen)
 
 add_executable(sim_eue
         cheby.cc
@@ -72,7 +72,7 @@ add_executable(sim_eue_multiroof
         simulate_multiroof.cc
         simulate_system.h
         )
-target_link_libraries (sim_eue_multiroof Eigen3::Eigen)
+target_link_libraries(sim_eue_multiroof Eigen3::Eigen)
 
 add_executable(sim_lolp_multiroof
         cheby_multiroof.cc
@@ -85,7 +85,7 @@ add_executable(sim_lolp_multiroof
         simulate_multiroof.cc
         simulate_system.h
         )
-target_link_libraries (sim_lolp_multiroof Eigen3::Eigen)
+target_link_libraries(sim_lolp_multiroof Eigen3::Eigen)
 
 add_executable(snc_eue
         cheby.cc

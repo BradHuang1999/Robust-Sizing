@@ -11,7 +11,7 @@
 
 double lambda2;
 
-void update_chebyshev_params(const valarray<bool>& is_zeros) {
+void update_chebyshev_params(const valarray<bool> &is_zeros) {
     size_t non_zero_cols = 0;
     for (size_t i = 0; i < n_solars; ++i) {
         if (!is_zeros[i]) {
@@ -19,16 +19,16 @@ void update_chebyshev_params(const valarray<bool>& is_zeros) {
         }
     }
 
-    double asymptote = (double)(non_zero_cols + 1) / (1 - confidence);
+    double asymptote = (double) (non_zero_cols + 1) / (1 - confidence);
     lambda2 = asymptote * (CHEBYSHEV_BETA + 1);
 
     double eta = (lambda2 + sqrt(lambda2 * lambda2 - 4 * CHEBYSHEV_BETA)) / (2 * CHEBYSHEV_BETA);
-    number_of_chunks = (size_t)(eta + 1);
+    number_of_chunks = (size_t) (eta + 1);
 }
 
 RowVectorXd convert_to_rowvec(
-        const SimulationMultiRoofResult& result,
-        const valarray<bool>& is_zeros) {
+        const SimulationMultiRoofResult &result,
+        const valarray<bool> &is_zeros) {
 
     valarray<double> result_pvs = result.PVs[!is_zeros];
     RowVectorXd ret(result_pvs.size() + 1);
@@ -40,8 +40,8 @@ RowVectorXd convert_to_rowvec(
 }
 
 SimulationMultiRoofResult convert_to_result(
-        const RowVectorXd& vec,
-        const valarray<bool>& is_zeros) {
+        const RowVectorXd &vec,
+        const valarray<bool> &is_zeros) {
 
     size_t arr_size = vec.size() - 1;
     valarray<double> arr(arr_size);
@@ -56,8 +56,8 @@ SimulationMultiRoofResult convert_to_result(
 }
 
 MatrixXd convert_simulation_result_to_matrix(
-        const vector<SimulationMultiRoofResult>& adagrad_sims,
-        const valarray<bool>& is_zeros, bool normalize_battery) {
+        const vector<SimulationMultiRoofResult> &adagrad_sims,
+        const valarray<bool> &is_zeros, bool normalize_battery) {
 
     if (adagrad_sims.empty()) {
         throw range_error("adagrad_sims is empty");
@@ -75,14 +75,14 @@ MatrixXd convert_simulation_result_to_matrix(
 }
 
 inline double get_l(
-        const RowVectorXd& xi,
-        const RowVectorXd& mu_eta,
-        const MatrixXd& sigma_eta_inv) {
+        const RowVectorXd &xi,
+        const RowVectorXd &mu_eta,
+        const MatrixXd &sigma_eta_inv) {
     RowVectorXd xi_mueta_diff = xi - mu_eta;
     return xi_mueta_diff * sigma_eta_inv * xi_mueta_diff.transpose();
 }
 
-RowVectorXd get_cheby_steps(const valarray<bool>& is_zeros) {
+RowVectorXd get_cheby_steps(const valarray<bool> &is_zeros) {
     valarray<double> pv_diffs(5, n_solars);
     valarray<double> non_zero_pv_diffs = pv_diffs[!is_zeros];
     size_t non_zero_pv_diffs_size = non_zero_pv_diffs.size();
@@ -94,13 +94,13 @@ RowVectorXd get_cheby_steps(const valarray<bool>& is_zeros) {
     return ret;
 }
 
-inline string to_string(const RowVectorXd& rv) {
+inline string to_string(const RowVectorXd &rv) {
     stringstream ss;
     ss << rv;
     return ss.str();
 }
 
-inline bool lt(const RowVectorXd& a, const RowVectorXd& b) {
+inline bool lt(const RowVectorXd &a, const RowVectorXd &b) {
     RowVectorXd diff = a - b;
     for (size_t l = 0; l < diff.size(); ++l) {
         if (diff(l) >= numeric_limits<double>::epsilon()) {
@@ -111,8 +111,8 @@ inline bool lt(const RowVectorXd& a, const RowVectorXd& b) {
 }
 
 vector<SimulationMultiRoofResult> get_chebyshev_bound(
-        const vector<SimulationMultiRoofResult>& adagrad_sims,
-        const valarray<bool>& is_zeros) {
+        const vector<SimulationMultiRoofResult> &adagrad_sims,
+        const valarray<bool> &is_zeros) {
 
     size_t non_zeros = 0;
     for (size_t i = 0; i < n_solars; ++i) {
@@ -172,7 +172,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
     cout << "sigma_eta_inv_non_zerovar=" << endl << sigma_eta_inv_non_zerovar << endl << endl;
     cout << "sigma_eta_inv=" << endl << sigma_eta_inv << endl << endl;
 
-    double l2 = (double)(eta * eta - 1) / ((1 - confidence) * eta * eta / (double)(non_zerovars + 1) - eta);
+    double l2 = (double) (eta * eta - 1) / ((1 - confidence) * eta * eta / (double) (non_zerovars + 1) - eta);
     cout << "l2=" << l2 << endl;
 
     RowVectorXd cheby_mins = convert_to_rowvec(SimulationMultiRoofResult(cells_min, pv_mins), is_zeros);
@@ -191,7 +191,7 @@ vector<SimulationMultiRoofResult> get_chebyshev_bound(
     deque<bool> search_q_bool;
     unordered_map<string, bool> seen;
 
-    auto is_outside = [&](const RowVectorXd& lxi) -> pair<bool, bool> {
+    auto is_outside = [&](const RowVectorXd &lxi) -> pair<bool, bool> {
         string lxi_str = to_string(lxi);
         if (seen.count(lxi_str)) {
 //            cout << lxi_str << " -> (cached) " << boolalpha << seen[lxi_str] << endl;

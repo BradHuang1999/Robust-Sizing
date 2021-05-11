@@ -1,20 +1,19 @@
 #!/usr/bin/env python3.7
 
-from glob import glob
-import os
-
-import re
 import itertools
-
-import subprocess
 import multiprocessing as mp
-
+import os
+import re
+import subprocess
+from glob import glob
 from sys import argv
+
 
 def run_command(cmd):
     print('running:', cmd)
     result = subprocess.check_output(cmd, shell=True)
     return result.decode()
+
 
 if __name__ == '__main__':
     # parse arguments
@@ -36,7 +35,7 @@ if __name__ == '__main__':
     param_type_mode = 0
     param_binary = 'bin/multiroof_test'
     param_n_solars = len(pv_paths)
-    param_metric = 1 # 1=EUE, 0=LOLP
+    param_metric = 1  # 1=EUE, 0=LOLP
     param_days_in_chunk = 365
     param_battery_varcost = 500
     param_battery_max = 120

@@ -28,7 +28,7 @@ size_t number_of_chunks;
 
 vector<double> read_data_from_file(istream &datafile, int limit) {
 
-    vector <double> data;
+    vector<double> data;
 
     if (datafile.fail()) {
         data.push_back(-1);

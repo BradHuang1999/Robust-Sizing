@@ -44,14 +44,37 @@
   <component name="ChangeListManager">
     <list default="true" id="dac637f0-02bd-4989-bf68-5beb1109eae7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/.ipynb_checkpoints/adagrad_vs_grid-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/.ipynb_checkpoints/adagrad_vs_grid-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/adagrad_vs_grid.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/adagrad_vs_grid.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/chebyshev_lambda.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/chebyshev_lambda.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/experiments_visualize_2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/experiments_visualize_2.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analytics/multiroof_sim/full_search_cheby.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/multiroof_sim/full_search_cheby.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.run/sim_eue.run.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.run/sim_eue.run.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.run/sim_lolp.run.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.run/sim_lolp.run.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.run/snc_eue.run.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.run/snc_eue.run.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.run/snc_lolp.run.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.run/snc_lolp.run.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analytics/chebyshev_curve/chebyshev_curve_analytics.py" beforeDir="false" afterPath="$PROJECT_DIR$/analytics/chebyshev_curve/chebyshev_curve_analytics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cheby.cc" beforeDir="false" afterPath="$PROJECT_DIR$/cheby.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cheby.h" beforeDir="false" afterPath="$PROJECT_DIR$/cheby.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cheby_multiroof.cc" beforeDir="false" afterPath="$PROJECT_DIR$/cheby_multiroof.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cheby_multiroof.h" beforeDir="false" afterPath="$PROJECT_DIR$/cheby_multiroof.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/params.cc" beforeDir="false" afterPath="$PROJECT_DIR$/params.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/params.h" beforeDir="false" afterPath="$PROJECT_DIR$/params.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/params_common.cc" beforeDir="false" afterPath="$PROJECT_DIR$/params_common.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/params_multiroof.cc" beforeDir="false" afterPath="$PROJECT_DIR$/params_multiroof.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/params_multiroof.h" beforeDir="false" afterPath="$PROJECT_DIR$/params_multiroof.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_multiroof_cheby_experiments.cc" beforeDir="false" afterPath="$PROJECT_DIR$/run_multiroof_cheby_experiments.cc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_multiroof_test.cc" beforeDir="false" afterPath="$PROJECT_DIR$/run_multiroof_test.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_simulation.cc" beforeDir="false" afterPath="$PROJECT_DIR$/run_simulation.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_simulation_multiroof.cc" beforeDir="false" afterPath="$PROJECT_DIR$/run_simulation_multiroof.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_snc_eue.cc" beforeDir="false" afterPath="$PROJECT_DIR$/run_snc_eue.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_snc_lolp.cc" beforeDir="false" afterPath="$PROJECT_DIR$/run_snc_lolp.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_pecan_leave_one_year_out.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_pecan_leave_one_year_out.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_rothera_epsilon_by_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_rothera_epsilon_by_type.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simulate_multiroof.cc" beforeDir="false" afterPath="$PROJECT_DIR$/simulate_multiroof.cc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/simulate_multiroof.h" beforeDir="false" afterPath="$PROJECT_DIR$/simulate_multiroof.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulate_system.cc" beforeDir="false" afterPath="$PROJECT_DIR$/simulate_system.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulate_system.h" beforeDir="false" afterPath="$PROJECT_DIR$/simulate_system.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/snc_eue_pertrace.cc" beforeDir="false" afterPath="$PROJECT_DIR$/snc_eue_pertrace.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/snc_eue_pertrace.h" beforeDir="false" afterPath="$PROJECT_DIR$/snc_eue_pertrace.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/snc_lolp_pertrace.cc" beforeDir="false" afterPath="$PROJECT_DIR$/snc_lolp_pertrace.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/snc_lolp_pertrace.h" beforeDir="false" afterPath="$PROJECT_DIR$/snc_lolp_pertrace.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,7 +242,9 @@
       <workItem from="1612162810827" duration="19079000" />
       <workItem from="1612639470094" duration="38006000" />
       <workItem from="1612973566145" duration="1294000" />
-      <workItem from="1613003397704" duration="29199000" />
+      <workItem from="1613003397704" duration="29410000" />
+      <workItem from="1614828054525" duration="27000" />
+      <workItem from="1620190174264" duration="5651000" />
     </task>
     <servers />
   </component>
@@ -242,109 +267,65 @@
     <state x="638" y="237" key="#New_File_Extensions" timestamp="1612661838992">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state x="496" y="206" key="#New_File_Extensions/0.25.1792.1038@0.25.1792.1038" timestamp="1611252860636" />
     <state x="638" y="237" key="#New_File_Extensions/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1612661838992" />
-    <state x="762" y="397" key="#Notifications" timestamp="1605588802708">
-      <screen x="0" y="23" width="1920" height="1006" />
+    <state x="502" y="259" width="1071" height="644" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1620529058236">
+      <screen x="0" y="25" width="1792" height="1038" />
     </state>
-    <state x="762" y="397" key="#Notifications/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605588802708" />
-    <state x="502" y="435" width="1071" height="644" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1613456615464">
-      <screen x="0" y="25" width="2304" height="1214" />
-    </state>
-    <state x="264" y="180" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605027466196" />
-    <state x="417" y="74" width="1164" height="932" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1792.1038@0.25.1792.1038" timestamp="1613280320159" />
-    <state x="676" y="202" width="1193" height="682" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049179434" />
-    <state x="502" y="435" width="1071" height="644" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456615464" />
-    <state x="646" y="232" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1608625596361">
-      <screen x="0" y="25" width="1920" height="998" />
-    </state>
-    <state x="646" y="232" key="#com.intellij.ide.macro.MacrosDialog/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1608625596361" />
+    <state x="502" y="259" width="1164" height="932" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1792.1038@0.25.1792.1038" timestamp="1620529058236" />
+    <state x="502" y="435" width="1071" height="644" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1620191076469" />
     <state x="866" y="329" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1612729521642">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state x="722" y="275" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1608627761595" />
     <state x="866" y="329" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1612729521642" />
     <state x="1247" y="617" width="784" height="580" key="#xdebugger.evaluate" timestamp="1613250059729">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state x="1579" y="330" key="#xdebugger.evaluate/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609262952253" />
-    <state x="-968" y="607" width="617" height="506" key="#xdebugger.evaluate/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633512027" />
     <state x="654" y="406" width="474" height="614" key="#xdebugger.evaluate/0.25.1792.1038@0.25.1792.1038" timestamp="1612940320476" />
-    <state x="883" y="271" width="555" height="580" key="#xdebugger.evaluate/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1608628972683" />
     <state x="1247" y="617" width="784" height="580" key="#xdebugger.evaluate/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613250059729" />
     <state width="1106" height="537" key="DebuggerActiveHint" timestamp="1613256994332">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="921" height="441" key="DebuggerActiveHint/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1608631923687" />
     <state width="1106" height="537" key="DebuggerActiveHint/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613256994332" />
-    <state width="877" height="911" key="GridCell.Tab.0.bottom" timestamp="1613577803732">
-      <screen x="0" y="25" width="1792" height="1038" />
+    <state width="982" height="1088" key="GridCell.Tab.0.bottom" timestamp="1613788471958">
+      <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="1970" height="538" key="GridCell.Tab.0.bottom/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287205" />
-    <state width="1421" height="299" key="GridCell.Tab.0.bottom/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502980" />
-    <state width="1517" height="221" key="GridCell.Tab.0.bottom/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989544482" />
     <state width="877" height="911" key="GridCell.Tab.0.bottom/0.25.1792.1038@0.25.1792.1038" timestamp="1613577803732" />
-    <state width="1188" height="181" key="GridCell.Tab.0.bottom/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609131828209" />
-    <state width="877" height="1088" key="GridCell.Tab.0.bottom/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456631968" />
-    <state width="877" height="911" key="GridCell.Tab.0.center" timestamp="1613577803731">
-      <screen x="0" y="25" width="1792" height="1038" />
+    <state width="982" height="1088" key="GridCell.Tab.0.bottom/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613788471958" />
+    <state width="982" height="1088" key="GridCell.Tab.0.center" timestamp="1613788471957">
+      <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="1970" height="538" key="GridCell.Tab.0.center/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287204" />
-    <state width="1421" height="299" key="GridCell.Tab.0.center/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502978" />
-    <state width="1517" height="221" key="GridCell.Tab.0.center/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989544480" />
     <state width="877" height="911" key="GridCell.Tab.0.center/0.25.1792.1038@0.25.1792.1038" timestamp="1613577803731" />
-    <state width="1188" height="181" key="GridCell.Tab.0.center/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609131828208" />
-    <state width="877" height="1088" key="GridCell.Tab.0.center/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456631967" />
-    <state width="877" height="911" key="GridCell.Tab.0.left" timestamp="1613577803730">
-      <screen x="0" y="25" width="1792" height="1038" />
+    <state width="982" height="1088" key="GridCell.Tab.0.center/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613788471957" />
+    <state width="982" height="1088" key="GridCell.Tab.0.left" timestamp="1613788471957">
+      <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="1970" height="538" key="GridCell.Tab.0.left/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287203" />
-    <state width="1421" height="299" key="GridCell.Tab.0.left/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502977" />
-    <state width="1517" height="221" key="GridCell.Tab.0.left/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989544479" />
     <state width="877" height="911" key="GridCell.Tab.0.left/0.25.1792.1038@0.25.1792.1038" timestamp="1613577803730" />
-    <state width="1188" height="181" key="GridCell.Tab.0.left/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609131828207" />
-    <state width="877" height="1088" key="GridCell.Tab.0.left/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456631967" />
-    <state width="877" height="911" key="GridCell.Tab.0.right" timestamp="1613577803732">
-      <screen x="0" y="25" width="1792" height="1038" />
+    <state width="982" height="1088" key="GridCell.Tab.0.left/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613788471957" />
+    <state width="982" height="1088" key="GridCell.Tab.0.right" timestamp="1613788471958">
+      <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="1970" height="538" key="GridCell.Tab.0.right/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287205" />
-    <state width="1421" height="299" key="GridCell.Tab.0.right/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502979" />
-    <state width="1517" height="221" key="GridCell.Tab.0.right/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989544481" />
     <state width="877" height="911" key="GridCell.Tab.0.right/0.25.1792.1038@0.25.1792.1038" timestamp="1613577803732" />
-    <state width="1188" height="181" key="GridCell.Tab.0.right/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609131828208" />
-    <state width="877" height="1088" key="GridCell.Tab.0.right/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456631968" />
-    <state width="982" height="1088" key="GridCell.Tab.1.bottom" timestamp="1613456629657">
+    <state width="982" height="1088" key="GridCell.Tab.0.right/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613788471958" />
+    <state width="982" height="1088" key="GridCell.Tab.1.bottom" timestamp="1613788471959">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="1970" height="538" key="GridCell.Tab.1.bottom/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287206" />
-    <state width="1421" height="299" key="GridCell.Tab.1.bottom/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502982" />
     <state width="819" height="912" key="GridCell.Tab.1.bottom/0.25.1792.1038@0.25.1792.1038" timestamp="1612940323156" />
-    <state width="1312" height="210" key="GridCell.Tab.1.bottom/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049415876" />
-    <state width="982" height="1088" key="GridCell.Tab.1.bottom/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456629657" />
-    <state width="982" height="1088" key="GridCell.Tab.1.center" timestamp="1613456629656">
+    <state width="982" height="1088" key="GridCell.Tab.1.bottom/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613788471959" />
+    <state width="982" height="1088" key="GridCell.Tab.1.center" timestamp="1613788471958">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="1970" height="538" key="GridCell.Tab.1.center/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287206" />
-    <state width="1421" height="299" key="GridCell.Tab.1.center/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502981" />
     <state width="819" height="912" key="GridCell.Tab.1.center/0.25.1792.1038@0.25.1792.1038" timestamp="1612940323156" />
-    <state width="1312" height="210" key="GridCell.Tab.1.center/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049415875" />
-    <state width="982" height="1088" key="GridCell.Tab.1.center/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456629656" />
-    <state width="982" height="1088" key="GridCell.Tab.1.left" timestamp="1613456629656">
+    <state width="982" height="1088" key="GridCell.Tab.1.center/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613788471958" />
+    <state width="982" height="1088" key="GridCell.Tab.1.left" timestamp="1613788471958">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="1970" height="538" key="GridCell.Tab.1.left/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287205" />
-    <state width="1421" height="299" key="GridCell.Tab.1.left/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502980" />
     <state width="819" height="912" key="GridCell.Tab.1.left/0.25.1792.1038@0.25.1792.1038" timestamp="1612940323156" />
-    <state width="1312" height="210" key="GridCell.Tab.1.left/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049415875" />
-    <state width="982" height="1088" key="GridCell.Tab.1.left/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456629656" />
-    <state width="982" height="1088" key="GridCell.Tab.1.right" timestamp="1613456629656">
+    <state width="982" height="1088" key="GridCell.Tab.1.left/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613788471958" />
+    <state width="982" height="1088" key="GridCell.Tab.1.right" timestamp="1613788471959">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state width="1970" height="538" key="GridCell.Tab.1.right/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609270287206" />
-    <state width="1421" height="299" key="GridCell.Tab.1.right/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605633502982" />
     <state width="819" height="912" key="GridCell.Tab.1.right/0.25.1792.1038@0.25.1792.1038" timestamp="1612940323156" />
-    <state width="1312" height="210" key="GridCell.Tab.1.right/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1609049415876" />
-    <state width="982" height="1088" key="GridCell.Tab.1.right/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456629656" />
+    <state width="982" height="1088" key="GridCell.Tab.1.right/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613788471959" />
     <state x="961" y="333" key="VCS.ChangeListViewerDialog" timestamp="1612150096475">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
@@ -353,107 +334,84 @@
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
     <state width="1099" height="607" key="XDebugger.FullValuePopup/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1612198444147" />
-    <state x="421" y="262" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1604995158036">
-      <screen x="0" y="23" width="1920" height="1006" />
-    </state>
-    <state x="421" y="262" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1604995158036" />
-    <state x="740" y="291" key="editAsTableFormatDialogDimension" timestamp="1611033540174">
+    <state x="793" y="188" width="718" height="888" key="find.popup" timestamp="1620191635514">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state x="740" y="291" key="editAsTableFormatDialogDimension/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1611033540174" />
-    <state x="793" y="188" width="718" height="888" key="find.popup" timestamp="1613260238131">
-      <screen x="0" y="25" width="2304" height="1214" />
-    </state>
-    <state x="661" y="158" width="598" height="735" key="find.popup/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1604994014982" />
-    <state x="661" y="165" width="598" height="773" key="find.popup/0.23.1920.1057/-1792.337.1792.1046@0.23.1920.1057" timestamp="1604989466476" />
     <state x="617" y="164" width="567" height="760" key="find.popup/0.25.1792.1038@0.25.1792.1038" timestamp="1612944668053" />
-    <state x="661" y="159" width="598" height="730" key="find.popup/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1606801120723" />
-    <state x="793" y="188" width="718" height="888" key="find.popup/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613260238131" />
-    <state width="600" height="428" key="javadoc.popup" timestamp="1604387675459">
-      <screen x="0" y="23" width="1920" height="1006" />
-    </state>
-    <state width="600" height="428" key="javadoc.popup/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1604387675459" />
-    <state x="859" y="421" width="432" height="562" key="refactoring.ChangeSignatureDialog" timestamp="1610867547423">
+    <state x="793" y="188" width="718" height="888" key="find.popup/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1620191635514" />
+    <state x="851" y="204" width="805" height="778" key="search.everywhere.popup" timestamp="1620687210214">
       <screen x="0" y="25" width="2304" height="1214" />
     </state>
-    <state x="798" y="333" key="refactoring.ChangeSignatureDialog/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1607850930218" />
-    <state x="859" y="421" key="refactoring.ChangeSignatureDialog/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1610867547423" />
-    <state x="851" y="204" width="805" height="778" key="search.everywhere.popup" timestamp="1613456577038">
-      <screen x="0" y="25" width="2304" height="1214" />
-    </state>
-    <state x="945" y="225" width="894" height="870" key="search.everywhere.popup/-1792.345.1792.1095/0.25.2560.1358@0.25.2560.1358" timestamp="1609226880882" />
-    <state x="709" y="171" width="670" height="644" key="search.everywhere.popup/0.23.1920.1006/-1792.337.1792.1097@0.23.1920.1006" timestamp="1605026587719" />
     <state x="662" y="178" width="670" height="666" key="search.everywhere.popup/0.25.1792.1038@0.25.1792.1038" timestamp="1613024173409" />
-    <state x="709" y="172" width="670" height="639" key="search.everywhere.popup/0.25.1920.998/-1792.339.1792.1095@0.25.1920.998" timestamp="1608693114483" />
-    <state x="851" y="204" width="805" height="778" key="search.everywhere.popup/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1613456577038" />
+    <state x="851" y="204" width="805" height="778" key="search.everywhere.popup/0.25.2304.1214/-1792.144.1792.1095@0.25.2304.1214" timestamp="1620687210214" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/run_simulation.cc</url>
-          <line>52</line>
+          <line>51</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cheby.cc</url>
-          <line>199</line>
+          <line>202</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="NONE" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/simulate_system.cc</url>
-          <line>173</line>
+          <line>162</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="NONE" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/simulate_system.cc</url>
-          <line>184</line>
+          <line>170</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cheby.cc</url>
-          <line>154</line>
+          <line>156</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cheby.cc</url>
-          <line>113</line>
+          <line>114</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="NONE" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cheby.cc</url>
-          <line>98</line>
+          <line>99</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/simulate_system.cc</url>
-          <line>146</line>
+          <line>140</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <condition expression="lowest_feasible_pv &lt;= 35" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/simulate_system.cc</url>
-          <line>155</line>
+          <line>147</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/simulate_system.cc</url>
-          <line>124</line>
+          <line>121</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/run_simulation.cc</url>
-          <line>15</line>
+          <line>14</line>
           <option name="timeStamp" value="29" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/run_simulation.cc</url>
-          <line>48</line>
+          <line>47</line>
           <option name="timeStamp" value="30" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/run_simulation_multiroof.cc</url>
-          <line>61</line>
+          <line>60</line>
           <option name="timeStamp" value="38" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -467,24 +425,9 @@
           <option name="timeStamp" value="104" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/params_common.h</url>
-          <line>30</line>
-          <option name="timeStamp" value="165" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/simulate_multiroof.cc</url>
-          <line>210</line>
-          <option name="timeStamp" value="195" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/run_multiroof_test.cc</url>
           <line>55</line>
           <option name="timeStamp" value="197" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/simulate_multiroof.cc</url>
-          <line>95</line>
-          <option name="timeStamp" value="202" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/cheby_multiroof.cc</url>

@@ -33,15 +33,15 @@ constexpr size_t static cheby_num_steps = 1000;
 /**
  * update_chebyshev_params: update before chebyshev simulation
  */
-void update_chebyshev_params(const valarray<bool>& is_zeros);
+void update_chebyshev_params(const valarray<bool> &is_zeros);
 
 /**
  * convert_simulation_result_to_matrix: convert vector of SimulationMultiRoofResult's
  *   to Eigen matrix. can be refactored to other modules
  */
 MatrixXd convert_simulation_result_to_matrix(
-        const vector<SimulationMultiRoofResult>& adagrad_sims,
-        const valarray<bool>& is_zeros, bool normalize_battery = true);
+        const vector<SimulationMultiRoofResult> &adagrad_sims,
+        const valarray<bool> &is_zeros, bool normalize_battery = true);
 
 /**
  * get_chebyshev_bound: calculates chebyshev bound based on the above variables
@@ -49,7 +49,7 @@ MatrixXd convert_simulation_result_to_matrix(
  * @return non-dominated, pareto efficient, chebyshev bound
  */
 vector<SimulationMultiRoofResult> get_chebyshev_bound(
-        const vector<SimulationMultiRoofResult>& adagrad_sims,
-        const valarray<bool>& is_zeros);
+        const vector<SimulationMultiRoofResult> &adagrad_sims,
+        const valarray<bool> &is_zeros);
 
 #endif //ROBUST_SIZING_CHEBY_MULTIROOF_H

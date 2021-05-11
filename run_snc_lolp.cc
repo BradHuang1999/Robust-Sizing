@@ -17,32 +17,31 @@ using namespace std;
 // metric: 0 for LOLP, 1 for unmet load
 // epsilon: number in range [0,1] representing LOLP or unmet load fraction.
 // chunk_size: length of time (in days)
-SimulationResult run_snc_lolp(vector <double> &load, vector <double> &solar, double epsilon, double confidence)
-{
-	vector <int> chunk_starts;
-	vector <int> chunk_ends;
+SimulationResult run_snc_lolp(vector<double> &load, vector<double> &solar, double epsilon, double confidence) {
+    vector<int> chunk_starts;
+    vector<int> chunk_ends;
 
-	for (size_t chunk_num = 0, chunk_start = 0; chunk_num < number_of_chunks; chunk_num += 1, chunk_start += chunk_step)
-	{
-		size_t chunk_end = chunk_start + chunk_size;
-		chunk_starts.push_back(chunk_start);
-		chunk_ends.push_back(chunk_end);
-	}
+    for (size_t chunk_num = 0, chunk_start = 0;
+         chunk_num < number_of_chunks; chunk_num += 1, chunk_start += chunk_step) {
+        size_t chunk_end = chunk_start + chunk_size;
+        chunk_starts.push_back(chunk_start);
+        chunk_ends.push_back(chunk_end);
+    }
 
-	return snc_lolp(load, solar, chunk_starts, chunk_ends, epsilon, confidence, chunk_size);
+    return snc_lolp(load, solar, chunk_starts, chunk_ends, epsilon, confidence, chunk_size);
 }
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
 
-	int input_process_status = process_input(argc, argv, false);
+    int input_process_status = process_input(argc, argv, false);
 
-	if (input_process_status) {
+    if (input_process_status) {
         cerr << "Illegal input" << endl;
-		return 1;
-	}
+        return 1;
+    }
 
-	SimulationResult sr = run_snc_lolp(load, solar, epsilon, confidence);
-	cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
+    SimulationResult sr = run_snc_lolp(load, solar, epsilon, confidence);
+    cout << sr.B << "\t" << sr.C << "\t" << sr.cost << endl;
 
-	return 0;
+    return 0;
 }
