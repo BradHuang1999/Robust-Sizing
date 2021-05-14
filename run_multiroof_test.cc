@@ -37,6 +37,73 @@ std::ostream &operator<<(std::ostream &os, const std::valarray<T> &v) {
     return os;
 }
 
+void greedy_search(size_t start_index) {
+    stringstream filename_ss;
+    filename_ss << "results/greedy_search/" << output_folder_path << "/";
+    filesystem::create_directory(filename_ss.str());
+    filename_ss << curr_time("%m_%d_%H_%M")
+                << "_start=" << start_index
+                << "_daysinchunk=" << days_in_chunk
+                << "_conf=" << confidence
+                << "_epsilon=" << epsilon
+                << "_num_steps=" << num_steps
+                << ".csv";
+
+    ofstream os(filename_ss.str());
+    if (os.fail()) {
+        throw runtime_error("os failed");
+    }
+    cout << "Starting greedy search, file stored at " << filename_ss.str() << endl;
+    os << "type,battery,";
+    for (size_t i = 0; i < n_solars; ++i) {
+        os << "pv" << i << ",";
+    }
+    os << "cost" << endl;
+
+    // combinatorial explosion
+    for (size_t type = 1; type < (1u << n_solars); ++type) {
+        if (type_mode != 0 && type_mode != type) {
+            continue;
+        }
+
+        cout << "\n--------------------- start of type " << type << " ---------------------" << endl;
+        cout << endl << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
+
+        valarray<double> pv_start = pv_maxs;
+        valarray<bool> is_zeros = (pv_maxs == (double) 0);
+
+        bool skip = false;
+        for (size_t i = 0; i < n_solars; ++i) {
+            if ((type & (1u << i)) == 0) {
+                if (is_zeros[i]) {
+                    skip = true;
+                    break;
+                }
+
+                pv_start[i] = 0;
+                is_zeros[i] = true;
+            }
+        }
+        if (skip) {
+            continue;
+        }
+
+        cout << "training len: " << load.size() << endl;
+        cout << "pv_start: " << pv_start << endl;
+        cout << "is_zeros: " << is_zeros << endl;
+
+        update_chebyshev_params(is_zeros);
+        update_number_of_chunks();
+
+        vector<SimulationMultiRoofResult> greedy_results = simulate_greedy(
+                load, solar, start_index, start_index + chunk_size, pv_start, is_zeros);
+
+        for (SimulationMultiRoofResult &r: greedy_results) {
+            os << type << "," << r << endl;
+        }
+    }
+}
+
 void adagrad_search(size_t start_index) {
     stringstream filename_ss;
     filename_ss << "results/adagrad_search/" << output_folder_path << "/";
@@ -95,7 +162,7 @@ void adagrad_search(size_t start_index) {
         update_chebyshev_params(is_zeros);
         update_number_of_chunks();
 
-        vector<SimulationMultiRoofResult> adagrad_results = simulate_deterministic_adagrad(
+        vector<SimulationMultiRoofResult> adagrad_results = simulate_adagrad(
                 load, solar, start_index, start_index + chunk_size, pv_start, is_zeros);
 
         for (SimulationMultiRoofResult &r: adagrad_results) {
@@ -250,7 +317,7 @@ SimulationMultiRoofResult full_search(const string &foldername, const curr_time 
 
         for (size_t chunk_num = 0; chunk_num < number_of_chunks; chunk_num += 1) {
             size_t chunk_start = chunk_num * chunk_step;
-            vector<SimulationMultiRoofResult> adagrad_results = simulate_deterministic_adagrad(
+            vector<SimulationMultiRoofResult> adagrad_results = simulate_adagrad(
                     load, solar, chunk_start, chunk_start + chunk_size, pv_start, is_zeros);
 
             SimulationMultiRoofResult min_adagrad_result = min_cost(adagrad_results);
@@ -647,6 +714,9 @@ int main(int argc, char **argv) {
             break;
         case 'a':
             adagrad_search(0);
+            break;
+        case 'e':
+            greedy_search(0);
             break;
         case 'r':
             chernoff_grid_map();

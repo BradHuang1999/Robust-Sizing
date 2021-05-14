@@ -43,7 +43,13 @@ SimulationMultiRoofResult binary_search_result(
         double cells_U = cells_max, double cells_L = cells_min);
 
 vector<SimulationMultiRoofResult>
-simulate_deterministic_adagrad(
+simulate_greedy(
+        const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+        size_t start_index, size_t end_index, const valarray<double> &init_pv,
+        const valarray<bool> &is_zeros, double b_0 = 0);
+
+vector<SimulationMultiRoofResult>
+simulate_adagrad(
         const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
         size_t start_index, size_t end_index, const valarray<double> &init_pv,
         const valarray<bool> &is_zeros, double b_0 = 0, double fudge_factor = 1e-6);

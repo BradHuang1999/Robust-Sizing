@@ -11,6 +11,7 @@
 #include "simulate_multiroof.h"
 
 #define USE_ADADELTA
+//#define USE_RANDOM_PERTURB
 
 using namespace std;
 
@@ -150,15 +151,59 @@ binary_search_result(const vector<double> &load_trace, const vector<vector<doubl
 }
 
 vector<SimulationMultiRoofResult>
-simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
-                               size_t start_index, size_t end_index, const valarray<double> &init_pv,
-                               const valarray<bool> &is_zeros, double b_0, double fudge_factor) {
-    default_random_engine generator;
+simulate_greedy(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+                size_t start_index, size_t end_index, const valarray<double> &init_pv,
+                const valarray<bool> &is_zeros, double b_0) {
 
+    vector<SimulationMultiRoofResult> ret;
+    valarray<double> pv_values(init_pv);
+
+    SimulationMultiRoofResult last_run_result = binary_search_result(
+            load_trace, solar_traces, start_index, end_index, init_pv, b_0);
+
+    while (last_run_result.feasible) {
+        ret.push_back(move(last_run_result));
+
+        SimulationMultiRoofResult least_cost_result;
+        size_t least_cost_t = -1;
+
+        for (size_t t = 0; t < n_solars; ++t) {
+            if (!is_zeros[t]) {
+                pv_values[t] -= pv_steps[t];
+                if (pv_values[t] > EPS) {
+                    SimulationMultiRoofResult next_step_result = binary_search_result(
+                            load_trace, solar_traces, start_index, end_index, pv_values, b_0);
+                    if (next_step_result.feasible && (least_cost_t == -1 || next_step_result.cost < least_cost_result.cost)) {
+                        least_cost_t = t;
+                        least_cost_result = move(next_step_result);
+                    }
+                }
+                pv_values[t] += pv_steps[t];
+            }
+        }
+
+        if (least_cost_t == -1) {
+            return ret;
+        }
+        last_run_result = move(least_cost_result);
+        pv_values[least_cost_t] -= pv_steps[least_cost_t];
+    }
+
+    return ret;
+}
+
+vector<SimulationMultiRoofResult>
+simulate_adagrad(const vector<double> &load_trace, const vector<vector<double>> &solar_traces,
+                 size_t start_index, size_t end_index, const valarray<double> &init_pv,
+                 const valarray<bool> &is_zeros, double b_0, double fudge_factor) {
+
+#ifdef USE_RANDOM_PERTURB
+    default_random_engine generator;
     vector<normal_distribution<double>> distribution;
     for (size_t t = 0; t < n_solars; ++t) {
         distribution.emplace_back(0, pv_steps[t]);
     }
+#endif
 
     vector<SimulationMultiRoofResult> ret;
 
@@ -171,7 +216,7 @@ simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<ve
     valarray<double> pv_values(init_pv);
 
 #ifdef USE_ADADELTA
-    fudge_factor = 1;
+    fudge_factor = 0.5;
     valarray<double> s(0.0, n_solars);
     valarray<double> delta(0.0, n_solars);
 #else
@@ -212,12 +257,14 @@ simulate_deterministic_adagrad(const vector<double> &load_trace, const vector<ve
         delta = (decay_rate * delta) + (1 - decay_rate) * g * g;
 #else
         g_ti += grad * grad;
-        pv_values -= adagrad_stepsize * (grad / (fudge_factor + sqrt(g_ti)));
+        pv_values -= 3 * (grad / (fudge_factor + sqrt(g_ti)));
 #endif
 
         for (size_t t = 0; t < n_solars; ++t) {
             if (!is_zeros[t]) {
+#ifdef USE_RANDOM_PERTURB
                 pv_values[t] += distribution[t](generator);
+#endif
                 if (pv_values[t] < pv_steps[t]) {
                     // force pv_values to be at least one step above 0.
                     // comes to bite us when there any many panels and the absolute stepsize is too big
@@ -372,7 +419,7 @@ tabu_cheroff(const vector<double> &load_trace, const vector<vector<double>> &sol
             for (size_t i = 0; i < n_solars; ++i) {
                 valarray<double> neighbor_pvs = curr_result.PVs;
                 neighbor_pvs[i] -= pv_steps[i];
-                if (neighbor_pvs[i] < pv_mins[i] - numeric_limits<double>::epsilon()) {
+                if (neighbor_pvs[i] < pv_mins[i] - EPS) {
                     continue;
                 }
 
