@@ -47,7 +47,7 @@ struct SimulationMultiRoofResult {
         cost = B * B_inv;
         for (size_t i = 0; i < n_solars; ++i) {
             double pv_value = PVs[i];
-            if (pv_value >= numeric_limits<double>::epsilon()) {
+            if (pv_value >= EPS) {
                 cost += pv_value * PV_invs[i] + PV_fix_costs[i];
             }
         }

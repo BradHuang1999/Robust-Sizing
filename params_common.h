@@ -55,7 +55,8 @@ const size_t static T_yr = 365 * 24 / T_u;
 double static kWh_in_one_cell = 0.011284;
 constexpr double static num_steps = 1000; // search in total of n steps
 
-double static INFTY = numeric_limits<double>::infinity();
+constexpr double static INFTY = numeric_limits<double>::infinity();
+constexpr double static EPS = numeric_limits<double>::epsilon();
 
 // FUNCTIONS
 
