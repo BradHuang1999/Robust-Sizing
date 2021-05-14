@@ -9,6 +9,9 @@
 #include <iterator>
 #include <cmath>
 
+//#define FIXED_CHEBY_STEP_SIZE_PV 5
+//#define FIXED_CHEBY_STEP_SIZE_BATTERY 1
+
 double lambda2;
 
 void update_chebyshev_params(const valarray<bool> &is_zeros) {
@@ -83,14 +86,22 @@ inline double get_l(
 }
 
 RowVectorXd get_cheby_steps(const valarray<bool> &is_zeros) {
-    valarray<double> pv_diffs(5, n_solars);
+#ifdef FIXED_CHEBY_STEP_SIZE_PV
+    valarray<double> pv_diffs(FIXED_CHEBY_STEP_SIZE_PV, n_solars);
+#else
+    valarray<double> pv_diffs = (pv_maxs - pv_mins) / cheby_num_steps;
+#endif
     valarray<double> non_zero_pv_diffs = pv_diffs[!is_zeros];
     size_t non_zero_pv_diffs_size = non_zero_pv_diffs.size();
     RowVectorXd ret(non_zero_pv_diffs_size + 1);
     for (size_t l = 0; l < non_zero_pv_diffs_size; ++l) {
         ret(l) = non_zero_pv_diffs[l];
     }
-    ret(non_zero_pv_diffs_size) = 1;
+#ifdef FIXED_CHEBY_STEP_SIZE_BATTERY
+    ret(non_zero_pv_diffs_size) = FIXED_CHEBY_STEP_SIZE_BATTERY;
+#else
+    ret(non_zero_pv_diffs_size) = (cells_max - cells_min) * kWh_in_one_cell / cheby_num_steps;
+#endif
     return ret;
 }
 
@@ -103,7 +114,7 @@ inline string to_string(const RowVectorXd &rv) {
 inline bool lt(const RowVectorXd &a, const RowVectorXd &b) {
     RowVectorXd diff = a - b;
     for (size_t l = 0; l < diff.size(); ++l) {
-        if (diff(l) >= numeric_limits<double>::epsilon()) {
+        if (diff(l) >= EPS) {
             return false;
         }
     }

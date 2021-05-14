@@ -26,7 +26,7 @@ constexpr double static CHEBYSHEV_BETA = 0.1;
 /**
  * cheby_num_steps: number of steps in each dimension to search for
  */
-constexpr size_t static cheby_num_steps = 1000;
+constexpr size_t static cheby_num_steps = 100;
 
 // FUNCTIONS
 
