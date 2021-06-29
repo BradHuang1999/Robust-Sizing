@@ -174,6 +174,8 @@ int process_input(int argc, char **argv, bool process_metric_input) {
     }
 
     chunk_size = days_in_chunk * 24 / T_u;
+    number_of_chunks = 100;
+
     chunk_step = (load.size() / T_yr) * solar.size() / number_of_chunks;
 
     return 0;
