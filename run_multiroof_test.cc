@@ -10,6 +10,7 @@
 #include <ctime>
 #include <iomanip>
 #include <filesystem>
+#include <algorithm>
 
 struct curr_time {
     const char *fmt;
@@ -488,6 +489,85 @@ void full_search_with_cross_validation(const string &foldername) {
     }
 }
 
+// mode: 1=max, 2=median, 3=average
+double total_cross_validation(int mode, const SimulationMultiRoofResult &result) {
+    vector<double> losses;
+    for (size_t chunk_num = 0; chunk_num < number_of_chunks; chunk_num += 1) {
+        size_t chunk_start = chunk_num * chunk_step;
+        double loss = sim(load, solar, chunk_start, chunk_start + chunk_size, result.B, result.PVs);
+        losses.push_back(loss);
+    }
+    if (losses.empty()) {
+        throw runtime_error("no cv performed, check number_of_chunks");
+    }
+    sort(losses.begin(), losses.end());
+    for (double loss: losses) {
+        cout << loss << " ";
+    }
+    cout << endl << endl;
+    switch (mode) {
+        case 1:
+            return losses[losses.size() - 1];
+        case 2:
+            return losses[losses.size() / 2];
+        case 3:
+            double sum_losses;
+            for (double loss: losses) {
+                sum_losses += loss;
+            }
+            return sum_losses / losses.size();
+        default:
+            throw runtime_error("invalid cv mode");
+    }
+}
+
+void run_cross_validation(int mode) {
+    valarray<bool> is_zeros = pv_maxs == 0;
+    update_chebyshev_params(is_zeros);
+    update_number_of_chunks(50);
+
+    const SimulationMultiRoofResult result(cells_max, pv_maxs);
+    const double loss = total_cross_validation(mode, result);
+
+    cout << "battery,pv...,cost: " << result << endl
+         << "loss: " << loss << endl;
+
+    ofstream os("results/cross_validation/cv.csv", ios_base::app);
+    os << output_folder_path << ","
+       << result << ","
+       << loss << endl;
+}
+
+void tesla_cross_validation(int mode, double pv_kw, double battery_kwh) {
+    valarray<bool> is_zeros(false, n_solars);
+    update_chebyshev_params(is_zeros);
+    update_number_of_chunks(50);
+
+    const double pv_used = pv_kw / 0.2;
+    const double battery_cell = battery_kwh / kWh_in_one_cell;
+
+    cout << "Using " << pv_kw << "kW of panels and " << battery_kwh << "kWh of battery" << endl;
+    cout << "Assuming per panel is 0.2kW and have 2 panels and some storage" << endl;
+    cout << "Running pv1 only, pv2 only, and evenly divided" << endl << endl;
+
+    const double pv1_only_validation = total_cross_validation(mode, {battery_cell, {pv_used, 0}});
+    const double pv2_only_validation = total_cross_validation(mode, {battery_cell, {0, pv_used}});
+    const double even_validation = total_cross_validation(mode, {battery_cell, {pv_used / 2, pv_used / 2}});
+    const double min_loss = min(even_validation, min(pv1_only_validation, pv2_only_validation));
+
+    cout << "pv1 only: " << pv1_only_validation << endl
+         << "pv2 only: " << pv2_only_validation << endl
+         << "both, evenly divided: " << even_validation << endl
+         << "min loss: " << min_loss << endl;
+
+    ofstream os("results/tesla/cv.csv", ios_base::app);
+    os << output_folder_path << ","
+       << pv1_only_validation << ","
+       << pv2_only_validation << ","
+       << even_validation << ","
+       << min_loss << endl;
+}
+
 void chernoff_grid_map() {
     valarray<double> pvs(2);
 
@@ -699,7 +779,7 @@ int main(int argc, char **argv) {
     cout << "num_steps = " << num_steps << endl;
     cout << "output_folder_path = " << output_folder_path << endl << endl;
 
-    cout << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl;
+    cout << "Operation started at " << curr_time("%m/%d %H:%M:%S") << endl << endl;
 
     if (input_process_status) {
         cerr << "Illegal input" << endl;
@@ -733,6 +813,12 @@ int main(int argc, char **argv) {
             break;
         case 'v':
             full_search_with_cross_validation(output_folder_path);
+            break;
+        case 's':
+            tesla_cross_validation(2, 12.24, 40.5);
+            break;
+        case 'o':
+            run_cross_validation(2);
             break;
         default:
             throw runtime_error("search mode not found");
