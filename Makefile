@@ -1,4 +1,4 @@
-all: multiroof_test sim sim_multiroof snc_lolp snc_eue
+all: multiroof_test sim snc_lolp snc_eue
 
 multiroof_test:
 	g++-9 -std=c++17 -I ~/eigen/ cheby_multiroof.cc params_common.cc params_multiroof.cc run_multiroof_test.cc simulate_multiroof.cc -o bin/multiroof_test
