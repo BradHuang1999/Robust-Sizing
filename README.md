@@ -26,7 +26,8 @@ make
 ```
 ./bin/multiroof_test f 0 <folder_name> <n_solar> <metric> <epsilon> <conf> <n_days> \
                      <battery_cost> <battery_max> <load_file> \
-                     <pv_fixed_cost> <pv_marginal_cost> <pv_max> <pv_file> [...repeat for more roofs]
+                     <pv_fixed_cost> <pv_marginal_cost> <pv_max> <pv_file> \
+                     [...repeat for more roofs]
 ```
 
 Simulation method for sizing:
@@ -81,8 +82,8 @@ For example, suppose we wish to run the simulation method with:
 
 - LOLP target of **20%** (or EUE target of **45%**)
 - Confidence of **85%** over any **365 day** period.
-- The price of PV panels is **2000/kW**, the price of battery storage is **500/kWh**
-- There are at most **70 kW** of PV panels and **225 kWh** of batteries available
+- The price of PV panels is **$2000/unit**, the fixed cost is **$10000/roof**, the price of battery storage is **$500/kWh**
+- There are at most **70 units** of PV panels and **225 kWh** of batteries available
 - The names of load and pv files are "example_inputs/load.txt" and "example_inputs/pv.txt" respectively.
 
 Then after downloading the code and going into the directory into which it was downloaded, we would write:
@@ -99,16 +100,16 @@ make
     0.2 \ # epsilon
     0.85 \ # conf
     365 \ # n_days
-    670 \ # battery_cost
-    4000 \ # battery_max
+    500 \ # battery_cost
+    225 \ # battery_max
     example_inputs/rothera/load_data_cleaned.txt \ # load_file
     10000 \ # pv_fixed_cost for the FIRST roof
-    188.16 \ # pv_marginal_cost
-    450.15 \ # pv_max
+    2000 \ # pv_marginal_cost
+    70 \ # pv_max
     example_inputs/rothera/NBH_effective.txt \ # pv_file
     10000 \ # pv_fixed_cost for the SECOND roof
-    188.16 \ # pv_marginal_cost
-    1043.86 \ # pv_max
+    2000 \ # pv_marginal_cost
+    70 \ # pv_max
     example_inputs/rothera/Admirals_effective.txt  # pv_file
 
 # Simulation Method LOLP
@@ -127,16 +128,16 @@ make
     0.45 \ # epsilon
     0.85 \ # conf
     365 \ # n_days
-    670 \ # battery_cost
-    4000 \ # battery_max
+    500 \ # battery_cost
+    225 \ # battery_max
     example_inputs/rothera/load_data_cleaned.txt \ # load_file
     10000 \ # pv_fixed_cost for the FIRST roof
-    188.16 \ # pv_marginal_cost
-    450.15 \ # pv_max
+    2000 \ # pv_marginal_cost
+    70 \ # pv_max
     example_inputs/rothera/NBH_effective.txt \ # pv_file
     10000 \ # pv_fixed_cost for the SECOND roof
-    188.16 \ # pv_marginal_cost
-    1043.86 \ # pv_max
+    2000 \ # pv_marginal_cost
+    70 \ # pv_max
     example_inputs/rothera/Admirals_effective.txt  # pv_file
 
 # Simulation Method EUE
@@ -156,7 +157,8 @@ The output values will be in the standard ouput. It contains a line with three v
 
 To output the results into a file, add `> output.file` at the end of the command:
 ```bash
-./bin/sim 2000 500 70 225 0 0.2 0.85 100 example_inputs/load.txt example_inputs/pv.txt > results/output.txt
+./bin/sim 2000 500 70 225 0 0.2 0.85 100 example_inputs/load.txt \
+          example_inputs/pv.txt > results/output.txt
 ```
 
 Additional configuration parameters, such as the size of the search space, or the number of samples taken from the input files, can be found in the corresponding .h file of each method, or `params_common.h`.
